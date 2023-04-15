@@ -82,7 +82,7 @@ const DataTable = ( {jobs} ) => {
         />
         <div className="grid grid-cols-1 w-full justify-end pt-8 mr-32">
             <Stack direction="row" spacing={4} className=' justify-self-end'  >
-                <Button variant="contained" startIcon={<AddIcon />} color="primary" >
+                <Button variant="outlined" startIcon={<AddIcon />} color="primary" >
                 Add
                 </Button>
             
@@ -92,7 +92,7 @@ const DataTable = ( {jobs} ) => {
                 <Button variant='outlined' color="secondary" disabled={isDisabled}  startIcon={<EditIcon />}>
                     Update
                 </Button>
-                <Button variant="contained" endIcon={<SendIcon />} color="success" disabled={isDisabled}>
+                <Button variant="outlined" endIcon={<SendIcon />} color="success" disabled={isDisabled}>
                 Send
                 </Button>
             </Stack>
