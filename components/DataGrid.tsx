@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { CrawledJob, Job } from '@prisma/client'; 
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import SendIcon from '@mui/icons-material/Send';
+import { CrawledJob, Job } from '@prisma/client';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { DataGrid, GridColDef, GridRowId } from '@mui/x-data-grid';
 
@@ -38,7 +38,7 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
 
       const [selectionModel, setSelectionModel] = useState<GridRowId[]>([]);
       const [isDisabled, setIsDisabled] = useState<boolean>(true);
-      const [adjustedJobs, setAdjustedJobs] = useState<Job[]>([]);
+      const [adjustedJobs, setAdjustedJobs] = useState<CrawledJob[]>([]);
 
       const handleSelectionModelChange = (newSelectionModel: GridRowId[]) => {
         setIsDisabled(false);
@@ -51,8 +51,24 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
     
       const getUpdatedJob = (job : Job)=>{
         //@ts-ignore
-       setAdjustedJobs(...adjustedJobs, job)
+          setAdjustedJobs((prevJobs)=>[...prevJobs,job])
+          console.log(adjustedJobs)
       } 
+
+      const handelUpdate = async ()=>{
+        const res = await fetch ('/api/jobs/update', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({selectedJobs:adjustedJobs}),
+
+        })
+        if (res.ok){
+          console.log('success')
+        }
+        else {
+          console.log('fail')
+        }
+      }
 
     
 
@@ -94,7 +110,7 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
                 Delete
                 </Button>
                 <Button variant='outlined' color="secondary" disabled={isDisabled}  startIcon={<EditIcon />}
-                   
+                   onClick={handelUpdate}
                 >
                     Update
                 </Button>
