@@ -1,8 +1,10 @@
 import { getJobs } from '@/Database';
 import DataTable from '@/components/DataGrid'
+import { Job } from '@/Database/interface';
+import { CrawledJob } from '@prisma/client';
 
-//@ts-ignore
-export default function Home( {jobs}) {
+
+export default function Home(jobs:CrawledJob[]) {
 
 
   return (
@@ -15,7 +17,7 @@ export default function Home( {jobs}) {
 }
 
 export async function getServerSideProps(){
-  const jobs=await getJobs();
+  const jobs = await getJobs()
   return {
     props:{
       jobs
