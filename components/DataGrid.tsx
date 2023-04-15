@@ -1,9 +1,17 @@
 import { useState } from 'react';
+import Fab from '@mui/material/Fab';
 import { Job } from '@prisma/client';
+import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import SendIcon from '@mui/icons-material/Send';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { DataGrid, GridColDef, GridRowId } from '@mui/x-data-grid';
 
 //@ts-ignore
 const DataTable = ( {jobs} ) => {
+    
 
     const columns: GridColDef[] = [
         { field: 'id', headerName: 'ID', width: 200, editable: true },
@@ -30,14 +38,19 @@ const DataTable = ( {jobs} ) => {
       )
 
       const [selectionModel, setSelectionModel] = useState<GridRowId[]>([]);
+      const [isDisabled, setIsDisabled] = useState<boolean>(true);
 
       const handleSelectionModelChange = (newSelectionModel: GridRowId[]) => {
+        setIsDisabled(false);
+        if (newSelectionModel.length === 0) {
+            setIsDisabled(true);
+        }
         setSelectionModel(newSelectionModel);
         console.log(newSelectionModel)
       };
     
       const getUpdatedJob = (job : Job)=>{
-        console.log(job.id)
+        console.log(job)
       } 
 
 
@@ -66,9 +79,24 @@ const DataTable = ( {jobs} ) => {
        onCellEditStop={(params)=>{
         getUpdatedJob(params.row as Job)
        }}
-
-
         />
+        <div className="grid grid-cols-1 w-full justify-end pt-8 mr-32">
+            <Stack direction="row" spacing={4} className=' justify-self-end'  >
+                <Button variant="contained" startIcon={<AddIcon />} color="primary" >
+                Add
+                </Button>
+            
+                <Button variant="outlined" startIcon={<DeleteIcon />} color="error" disabled={isDisabled} >
+                Delete
+                </Button>
+                <Button variant='outlined' color="secondary" disabled={isDisabled}  startIcon={<EditIcon />}>
+                    Update
+                </Button>
+                <Button variant="contained" endIcon={<SendIcon />} color="success" disabled={isDisabled}>
+                Send
+                </Button>
+            </Stack>
+        </div>
 
 
         </>

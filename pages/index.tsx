@@ -1,13 +1,5 @@
-import Image from 'next/image'
 import { getJobs } from '@/Database';
-import { Inter } from 'next/font/google'
 import DataTable from '@/components/DataGrid'
-
-
-
-
-
-const inter = Inter({ subsets: ['latin'] })
 
 //@ts-ignore
 export default function Home( {jobs}) {
