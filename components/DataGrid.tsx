@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import Fab from '@mui/material/Fab';
 import { CrawledJob, Job } from '@prisma/client'; 
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
@@ -55,17 +54,7 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
        setAdjustedJobs(...adjustedJobs, job)
       } 
 
-      const handleUpdate = async ()=>{
-        // console.log(adjustedJobs)   
-        // const updatedJobs = selectionModel.map((id)=>{
-        //     const job = jobs.find((job)=>job.id===id);
-        //     return job;
-        // })
-        // await updateJobs(updatedJobs);
-
-        updateJobs(adjustedJobs);
-        
-        }   
+    
 
 
 
@@ -105,7 +94,7 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
                 Delete
                 </Button>
                 <Button variant='outlined' color="secondary" disabled={isDisabled}  startIcon={<EditIcon />}
-                    onClick={handleUpdate}
+                   
                 >
                     Update
                 </Button>
