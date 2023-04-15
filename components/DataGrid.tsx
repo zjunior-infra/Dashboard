@@ -1,11 +1,6 @@
 import { useState } from 'react';
-import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
-import SendIcon from '@mui/icons-material/Send';
+
 import { CrawledJob, Job } from '@prisma/client';
-import DeleteIcon from '@mui/icons-material/Delete';
 import { DataGrid, GridColDef, GridRowId } from '@mui/x-data-grid';
 
 
@@ -36,30 +31,11 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
       }
       )
 
-      const [selectionModel, setSelectionModel] = useState<GridRowId[]>([]);
-      const [isDisabled, setIsDisabled] = useState<boolean>(true);
-      const [adjustedJobs, setAdjustedJobs] = useState<CrawledJob[]>([]);
-
-      const handleSelectionModelChange = (newSelectionModel: GridRowId[]) => {
-        setIsDisabled(false);
-        if (newSelectionModel.length === 0) {
-            setIsDisabled(true);
-        }
-        setSelectionModel(newSelectionModel);
-        console.log(newSelectionModel)
-      };
-    
-      const getUpdatedJob = (job : Job)=>{
-        //@ts-ignore
-          setAdjustedJobs((prevJobs)=>[...prevJobs,job])
-          console.log(adjustedJobs)
-      } 
-
       const handelUpdate = async ()=>{
         const res = await fetch ('/api/jobs/update', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({selectedJobs:adjustedJobs}),
+          // body: JSON.stringify({selectedJobs:adjustedJobs}),
 
         })
         if (res.ok){
@@ -77,49 +53,6 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
 
     return ( 
         <>
-         <DataGrid 
-        rows={rows}
-        columns={columns}
-        pagination
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 13,
-            },
-          },
-        }}
-        pageSizeOptions={[13]}
-       
-        checkboxSelection
-        disableRowSelectionOnClick
-       
-        onRowSelectionModelChange = {handleSelectionModelChange}
-        isCellEditable={(params)=>{return true}}
-        editMode='cell'
-       onCellEditStop={(params)=>{
-        getUpdatedJob(params.row as Job)
-       }}
-        />
-        <div className="grid grid-cols-1 w-full justify-end pt-8 mr-32">
-            <Stack direction="row" spacing={4} className=' justify-self-end'  >
-                <Button variant="outlined" startIcon={<AddIcon />} color="primary" >
-                Add
-                </Button>
-            
-                <Button variant="outlined" startIcon={<DeleteIcon />} color="error" disabled={isDisabled} >
-                Delete
-                </Button>
-                <Button variant='outlined' color="secondary" disabled={isDisabled}  startIcon={<EditIcon />}
-                   onClick={handelUpdate}
-                >
-                    Update
-                </Button>
-                <Button variant="outlined" endIcon={<SendIcon />} color="success" disabled={isDisabled}>
-                Send
-                </Button>
-            </Stack>
-        </div>
-
 
         </>
      );

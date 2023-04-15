@@ -14,13 +14,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
       const updatedJobs = await Promise.all(
         selectedJobs.map(async (job: CrawledJob) => {
+           const { id, ...rest } = job; 
           const updatedJob = await prisma.crawledJob.update({
             where: { id: job.id },
             data: {
-              company: 'New Company Name',
-              title: 'New Job Title',
-              email: 'new-email@example.com',
-              deadline: 'New Deadline',
+                ...rest,
             },
           });
           return updatedJob;
