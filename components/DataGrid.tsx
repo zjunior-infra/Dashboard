@@ -9,8 +9,9 @@ import SendIcon from '@mui/icons-material/Send';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { DataGrid, GridColDef, GridRowId } from '@mui/x-data-grid';
 
-const DataTable = ( props:CrawledJob[] ) => {
-    const jobs:CrawledJob[] = props
+
+const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
+    
 
     const columns: GridColDef[] = [
         { field: 'id', headerName: 'ID', width: 200, editable: true },
@@ -105,5 +106,4 @@ const DataTable = ( props:CrawledJob[] ) => {
 
 
 export default DataTable
-
 
