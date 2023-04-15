@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Fab from '@mui/material/Fab';
-import { CrawledJob, Job } from '@prisma/client';
+import { CrawledJob, Job } from '@prisma/client'; 
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
@@ -39,6 +39,7 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
 
       const [selectionModel, setSelectionModel] = useState<GridRowId[]>([]);
       const [isDisabled, setIsDisabled] = useState<boolean>(true);
+      const [adjustedJobs, setAdjustedJobs] = useState<Job[]>([]);
 
       const handleSelectionModelChange = (newSelectionModel: GridRowId[]) => {
         setIsDisabled(false);
@@ -50,8 +51,22 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
       };
     
       const getUpdatedJob = (job : Job)=>{
-        console.log(job)
+        //@ts-ignore
+       setAdjustedJobs(...adjustedJobs, job)
       } 
+
+      const handleUpdate = async ()=>{
+        // console.log(adjustedJobs)   
+        // const updatedJobs = selectionModel.map((id)=>{
+        //     const job = jobs.find((job)=>job.id===id);
+        //     return job;
+        // })
+        // await updateJobs(updatedJobs);
+
+        updateJobs(adjustedJobs);
+        
+        }   
+
 
 
 
@@ -89,7 +104,9 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
                 <Button variant="outlined" startIcon={<DeleteIcon />} color="error" disabled={isDisabled} >
                 Delete
                 </Button>
-                <Button variant='outlined' color="secondary" disabled={isDisabled}  startIcon={<EditIcon />}>
+                <Button variant='outlined' color="secondary" disabled={isDisabled}  startIcon={<EditIcon />}
+                    onClick={handleUpdate}
+                >
                     Update
                 </Button>
                 <Button variant="outlined" endIcon={<SendIcon />} color="success" disabled={isDisabled}>
