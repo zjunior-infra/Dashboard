@@ -17,13 +17,13 @@ function formatJobs(jobs , {
         const closeDate=new Date(today.getFullYear(),today.getMonth(),today.getDate()+8);
         if(date<=closeDate){
           return [...acc, {...job, close:true}];
-        }
+        } 
         acc.push(job)
         return acc;
      }, [])
      // filter by priority
      if(sortByDate){
-      //@ts-ignore
+      //@ts-ignore 
       filteredJobs.sort((a,b)=> new Date(a.deadline).getTime()-new Date(b.deadline).getTime());
      }
      return filteredJobs;
