@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Fab from '@mui/material/Fab';
-import { Job } from '@prisma/client';
+import { CrawledJob, Job } from '@prisma/client';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
@@ -9,8 +9,8 @@ import SendIcon from '@mui/icons-material/Send';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { DataGrid, GridColDef, GridRowId } from '@mui/x-data-grid';
 
-//@ts-ignore
-const DataTable = ( {jobs} ) => {
+
+const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
     
 
     const columns: GridColDef[] = [
@@ -106,5 +106,4 @@ const DataTable = ( {jobs} ) => {
 
 
 export default DataTable
-
 
