@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { green } from '@mui/material/colors';
 import { Dispatch, SetStateAction } from 'react';
 import { Check , Save, Delete} from '@mui/icons-material';
 import { Box, Fab, CircularProgress } from '@mui/material';
 import {GridRowId, GridRenderCellParams} from '@mui/x-data-grid'
+import { Job } from '@/Database/interface';
 
 
 interface UserActionProps {
@@ -15,6 +16,42 @@ interface UserActionProps {
 const UserAction = ({params , rowId, setRowId } : UserActionProps) => {
     const [loading, setLoading] = useState<boolean>(false)
     const [success, setSuccess] = useState<boolean>(false)
+    const [adjustedJobs, setAdjustedJobs] = useState<Job[]>([])
+
+    const handelUpdate = async ()=>{
+        const res = await fetch ('/api/jobs/update', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({selectedJobs: adjustedJobs}),
+
+        })
+        if (res.ok){
+          console.log('success')
+          setAdjustedJobs([])
+        }
+        else {
+          console.log('fail')
+        }
+      }
+
+
+    const handleButtonClick = async () => {
+        setLoading(true)
+        await handelUpdate()
+        setLoading(false)
+        setSuccess(true)
+        setAdjustedJobs([]) 
+        setTimeout(() => {
+            setSuccess(false)
+            setRowId('')
+        }, 2000)
+    };
+    useEffect(() => {
+        if (rowId) {
+            setAdjustedJobs(jobs => [...jobs, params.row])
+        }
+    }, [rowId, params.row])
+    
     return ( 
         <div className=" text-white">
             <Box className='flex justify-center items-center gap-x-5'
@@ -49,6 +86,8 @@ const UserAction = ({params , rowId, setRowId } : UserActionProps) => {
                     borderColor: green[500],
                 }}
                 disabled={params.id !== rowId || loading}
+
+                onClick={handleButtonClick}
                 
                 >
                 <Save />
@@ -63,6 +102,7 @@ const UserAction = ({params , rowId, setRowId } : UserActionProps) => {
                         top: -6,
                         left: -6,
                         zIndex: 1,
+
                     }}
                     />
                     )}

@@ -42,31 +42,9 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
       }
       )
 
-      
-
-      const handelUpdate = async ()=>{
-        const res = await fetch ('/api/jobs/update', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          // body: JSON.stringify({selectedJobs:adjustedJobs}),
-
-        })
-        if (res.ok){
-          console.log('success')
-        }
-        else {
-          console.log('fail')
-        }
-      }
-
-    console.log(rowId)
-
-
-
-
     return ( 
         <>
-        <Box sx={{ height: 400, width: '100%' }}>
+        <Box sx={{ height: 600, width: '100%' }}>
 
           <Typography variant="h3" component="h3"  color={'white'}
             sx={{textAlign:'center', mt:3, mb:3}}
