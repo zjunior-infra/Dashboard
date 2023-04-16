@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { green } from '@mui/material/colors';
 import { Dispatch, SetStateAction } from 'react';
-import { Check , Save} from '@mui/icons-material';
+import { Check , Save, Delete} from '@mui/icons-material';
 import { Box, Fab, CircularProgress } from '@mui/material';
 import {GridRowId, GridRenderCellParams} from '@mui/x-data-grid'
 
@@ -17,7 +17,8 @@ const UserAction = ({params , rowId, setRowId } : UserActionProps) => {
     const [success, setSuccess] = useState<boolean>(false)
     return ( 
         <div className=" text-white">
-            <Box
+            <Box className='flex justify-center items-center gap-x-5'
+            gap={2}
             sx = {{
                 m: 1,
                 position: 'relative',
@@ -65,6 +66,16 @@ const UserAction = ({params , rowId, setRowId } : UserActionProps) => {
                     }}
                     />
                     )}
+                <Fab className='bg-red-500 hover:bg-red-700' 
+                sx={{
+                    width: 40,
+                    height: 40,
+                }}
+                disabled={params.id !== rowId || loading}
+                >
+                <Delete />
+                </Fab>
+                
             </Box>
            
           
