@@ -53,6 +53,10 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
 
     return ( 
         <>
+          <DataGrid
+          columns={columns}
+          rows={rows}
+          />
 
         </>
      );
