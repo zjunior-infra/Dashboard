@@ -1,15 +1,18 @@
 import UserAction from './UserAction';
 import { useState, useMemo } from 'react';
-import { Delete } from '@mui/icons-material';
+import { green } from '@mui/material/colors';
+import { Delete, Check } from '@mui/icons-material';
 import AddIcon from '@mui/icons-material/Add';
 import { CrawledJob, Job } from '@prisma/client';
-import { Box, Typography, Avatar, Fab } from '@mui/material';
+import { Box, Typography, Avatar, Fab, CircularProgress } from '@mui/material';
 import { DataGrid, GridColDef, GridRowId, GridRowSpacingParams, gridClasses, GridRenderCellParams } from '@mui/x-data-grid';
 
 
 const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
 
   const [rowId, setRowId] = useState('')
+  const [loading, setLoading] = useState<boolean>(false)
+  const [success, setSuccess] = useState<boolean>(false)
   const [selectedJobs, setSelectedJobs] = useState<GridRowId[]>([])
     
     const columns = useMemo(() => [
@@ -46,19 +49,27 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
       )
 
       const handleDelete = async () => {
+        setLoading(true)
         const res = await fetch ('/api/jobs/delete', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ids: selectedJobs}),
+          body: JSON.stringify({selectedJobs: selectedJobs}),
 
         })
         if (res.ok){
           console.log('success')
-          setSelectedJobs([])
+          setLoading(false)
+          setSuccess(true)
+          setTimeout(() => {
+            setSuccess(false)
+            setSelectedJobs([])
+          }, 2000)
         }
         else {
           console.log('fail')
           console.log(res)
+          setLoading(false)
+          
         }
       }
 
@@ -84,18 +95,60 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
             <AddIcon />
           </Fab>
 
-          {selectedJobs.length > 0 &&
-          <Fab className='bg-red-400 hover:bg-red-500' 
-                sx={{
-                    width: 40,
-                    height: 40,
+          {selectedJobs.length > 0 ? (
+                <Box className='flex justify-center items-center gap-x-5'
+                gap={2}
+                sx = {{
                     
+                    position: 'relative',
+    
+    
                 }}
-                onClick={() => handleDelete()}
                 >
-                <Delete />
-            </Fab>
-          }
+                {success ? (
+                    <Fab className='bg-green-500 hover:bg-green-700'
+                    color="primary"
+                    
+                    sx={{
+                        width: 40,
+                        height: 40, 
+                       
+                    }}
+                   
+                    >
+                    <Check />
+                    </Fab>
+                ) : (
+                  <Fab className='bg-red-400 hover:bg-red-500' 
+                  sx={{
+                      width: 40,
+                      height: 40,
+                      
+                  }}
+                  onClick={() => handleDelete()}
+                  >
+                  <Delete />
+              </Fab>
+          )}
+                    {loading && (
+                        <CircularProgress
+                        size={52}
+                        sx={{
+                            color: green[500],
+                            position: 'absolute',
+                            top: -6,
+                            left: -6,
+                            zIndex: 1,
+    
+                        }}
+                        />
+                        )}
+                    
+                </Box>
+           ): (
+            <></>
+          )}
+           
           </div>
 
           <DataGrid

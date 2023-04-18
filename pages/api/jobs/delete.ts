@@ -12,15 +12,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   
     const { selectedJobs } = req.body;
 
-    console.log('this is selected jobs', req.body.id);
   
 
     try {
-      const deletedAuthor = await prisma.crawledJob.delete({
+      const deletedAuthor = await prisma.crawledJob.deleteMany({
         where: {
-          id: req.body.id,
+          id: {
+            in: selectedJobs,
+          },
         },
       });
+
       console.log({ deletedAuthor });
       res.status(200).json({ message: 'Job deleted successfully' });
     } catch (error) {
