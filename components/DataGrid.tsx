@@ -1,7 +1,7 @@
 import UserAction from './UserAction';
 import { toast } from 'react-toastify';
 import EditButtons from './editButtons';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { CrawledJob, Job } from '@prisma/client';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
@@ -16,7 +16,7 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
   const [rowId, setRowId] = useState('')
   const [loading, setLoading] = useState<boolean>(false)
   const [success, setSuccess] = useState<boolean>(false)
-
+  const [ key, setKey] = useState<number>(0)
   const [editTable , setEditTable] = useState<boolean>(false)
   const [selectedJobs, setSelectedJobs] = useState<GridRowId[]>([])
 
@@ -34,13 +34,13 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
 
       { field: 'actions', headerName: 'Actions', type: 'actions',
         renderCell: (params:GridRenderCellParams) =>
-          <UserAction params={params} rowId={rowId} setRowId={setRowId} selectedJobs={selectedJobs} setSelectedJobs={setSelectedJobs}/>
+          <UserAction params={params} rowId={rowId} setRowId={setRowId} selectedJobs={selectedJobs} setSelectedJobs={setSelectedJobs} setKey={setKey}/>
         ,  
       },
 
     ], [rowId])
 
-      const rows = jobs.map((job:Job)=>{
+      let rows = jobs.map((job:Job)=>{
         const {id,company,title,link,deadline,logo,skills}=job;
         return {
           id,
@@ -67,10 +67,13 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
           console.log('success')
           setLoading(false)
           setSuccess(true)
+          setKey((prev) => prev + 1)
           setTimeout(() => {
             setSuccess(false)
             setSelectedJobs([])
           }, 2000)
+
+
         }
         else {
           toast.error('Error deleting jobs')
@@ -88,6 +91,8 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
         })
         if (res.ok){
           console.log('success')
+          setKey((prev) => prev + 1)
+          setSelectedJobs([])
           toast.success('Jobs confirmed successfully')
         }
         else {
@@ -143,6 +148,7 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
           <DataGrid
             columns={columns}
             rows={rows}
+            key={key}
             getRowId={(row) => row.id}
             pageSizeOptions={[13, 50, 100]}  
             checkboxSelection={editTable}
