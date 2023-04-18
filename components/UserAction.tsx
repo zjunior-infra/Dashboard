@@ -1,10 +1,12 @@
+import { toast } from 'react-toastify';
 import { useState, useEffect } from 'react';
 import { green } from '@mui/material/colors';
-import { Dispatch, SetStateAction } from 'react';
-import { Check , Save, Delete} from '@mui/icons-material';
-import { Box, Fab, CircularProgress, selectClasses } from '@mui/material';
-import {GridRowId, GridRenderCellParams} from '@mui/x-data-grid'
 import { Job } from '@/Database/interface';
+import { Dispatch, SetStateAction } from 'react';
+import { Check , Save} from '@mui/icons-material';
+import { Box, Fab, CircularProgress } from '@mui/material';
+import {GridRowId, GridRenderCellParams} from '@mui/x-data-grid'
+
 
 
 interface UserActionProps {
@@ -29,10 +31,12 @@ const UserAction = ({params , rowId, setRowId, selectedJobs, setSelectedJobs } :
         })
         if (res.ok){
           console.log('success')
+          toast.success('Job updated successfully')
           setAdjustedJobs([])
         }
         else {
           console.log('fail')
+            toast.error('Job update failed')
         }
       }
 

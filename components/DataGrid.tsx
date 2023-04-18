@@ -1,13 +1,12 @@
 import UserAction from './UserAction';
-import { useState, useMemo } from 'react';
-import { green } from '@mui/material/colors';
+import { toast } from 'react-toastify';
 import EditButtons from './editButtons';
+import { useState, useMemo } from 'react';
 import { CrawledJob, Job } from '@prisma/client';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
-import { Delete, Check } from '@mui/icons-material';
 import NavigationIcon from '@mui/icons-material/Navigation';
-import { Box, Typography, Avatar, Fab, CircularProgress } from '@mui/material';
+import { Box, Typography, Avatar, Fab } from '@mui/material';
 import { DataGrid, GridRowId, GridRowSpacingParams, gridClasses, GridRenderCellParams } from '@mui/x-data-grid';
 
 
@@ -17,6 +16,7 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
   const [rowId, setRowId] = useState('')
   const [loading, setLoading] = useState<boolean>(false)
   const [success, setSuccess] = useState<boolean>(false)
+
   const [editTable , setEditTable] = useState<boolean>(false)
   const [selectedJobs, setSelectedJobs] = useState<GridRowId[]>([])
 
@@ -63,6 +63,7 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
 
         })
         if (res.ok){
+          toast.success('Jobs deleted successfully')
           console.log('success')
           setLoading(false)
           setSuccess(true)
@@ -72,6 +73,7 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
           }, 2000)
         }
         else {
+          toast.error('Error deleting jobs')
           setLoading(false)
           
         }
@@ -86,9 +88,11 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
         })
         if (res.ok){
           console.log('success')
+          toast.success('Jobs confirmed successfully')
         }
         else {
           console.log('error')
+          toast.error('Error confirming jobs')
         }
       }
 
@@ -165,7 +169,6 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
               console.log(params)
               
             }}
-            keepNonExistentRowsSelected
             
           />          
 
