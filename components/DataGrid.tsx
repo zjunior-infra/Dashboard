@@ -1,13 +1,16 @@
-import { useState, useMemo } from 'react';
 import UserAction from './UserAction';
+import { useState, useMemo } from 'react';
+import { Delete } from '@mui/icons-material';
+import AddIcon from '@mui/icons-material/Add';
 import { CrawledJob, Job } from '@prisma/client';
-import { Box, Typography, Avatar, Link } from '@mui/material';
+import { Box, Typography, Avatar, Fab } from '@mui/material';
 import { DataGrid, GridColDef, GridRowId, GridRowSpacingParams, gridClasses, GridRenderCellParams } from '@mui/x-data-grid';
 
 
 const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
 
   const [rowId, setRowId] = useState('')
+  const [selectedJobs, setSelectedJobs] = useState<GridRowId[]>([])
     
     const columns = useMemo(() => [
       { field: 'id', headerName: 'ID', width: 200, editable: true },
@@ -22,7 +25,7 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
 
       { field: 'actions', headerName: 'Actions', type: 'actions',
         renderCell: (params:GridRenderCellParams) =>
-          <UserAction params={params} rowId={rowId} setRowId={setRowId} />
+          <UserAction params={params} rowId={rowId} setRowId={setRowId} selectedJobs={selectedJobs} setSelectedJobs={setSelectedJobs}/>
         ,  
       },
 
@@ -42,6 +45,23 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
       }
       )
 
+      const handleDelete = async () => {
+        const res = await fetch ('/api/jobs/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ids: selectedJobs}),
+
+        })
+        if (res.ok){
+          console.log('success')
+          setSelectedJobs([])
+        }
+        else {
+          console.log('fail')
+          console.log(res)
+        }
+      }
+
     return ( 
         <>
         <Box sx={{ height: 600, width: '100%' }}>
@@ -52,6 +72,31 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
             Mange Jobs
 
           </Typography>
+          <div className="icon w-full flex items-end justify-end gap-x-4 mb-2 mr-5">
+          <Fab color="error" aria-label="add" className=' bg-blue-400 hover:bg-blue-500'
+            sx={{
+              width: 40,
+              height: 40,
+              
+          }}
+          
+          >
+            <AddIcon />
+          </Fab>
+
+          {selectedJobs.length > 0 &&
+          <Fab className='bg-red-400 hover:bg-red-500' 
+                sx={{
+                    width: 40,
+                    height: 40,
+                    
+                }}
+                onClick={() => handleDelete()}
+                >
+                <Delete />
+            </Fab>
+          }
+          </div>
 
           <DataGrid
             columns={columns}
@@ -73,6 +118,14 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
             }}
 
             onCellEditStop={(params) => setRowId(params.id.toString())}
+
+
+            onRowSelectionModelChange={(params) => {
+              setSelectedJobs(params)
+              console.log(params)
+              
+            }}
+            keepNonExistentRowsSelected
             
           />          
 

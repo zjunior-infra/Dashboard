@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { green } from '@mui/material/colors';
 import { Dispatch, SetStateAction } from 'react';
 import { Check , Save, Delete} from '@mui/icons-material';
-import { Box, Fab, CircularProgress } from '@mui/material';
+import { Box, Fab, CircularProgress, selectClasses } from '@mui/material';
 import {GridRowId, GridRenderCellParams} from '@mui/x-data-grid'
 import { Job } from '@/Database/interface';
 
@@ -11,9 +11,11 @@ interface UserActionProps {
     params : GridRenderCellParams
     rowId : String
     setRowId :Dispatch<SetStateAction<string>>
+    selectedJobs: GridRowId[]
+    setSelectedJobs : Dispatch<SetStateAction<GridRowId[]>>
 }
 
-const UserAction = ({params , rowId, setRowId } : UserActionProps) => {
+const UserAction = ({params , rowId, setRowId, selectedJobs, setSelectedJobs } : UserActionProps) => {
     const [loading, setLoading] = useState<boolean>(false)
     const [success, setSuccess] = useState<boolean>(false)
     const [adjustedJobs, setAdjustedJobs] = useState<Job[]>([])
@@ -22,7 +24,7 @@ const UserAction = ({params , rowId, setRowId } : UserActionProps) => {
         const res = await fetch ('/api/jobs/update', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({selectedJobs: adjustedJobs}),
+          body: JSON.stringify({selectedJobs: adjustedJobs}),
 
         })
         if (res.ok){
@@ -33,7 +35,6 @@ const UserAction = ({params , rowId, setRowId } : UserActionProps) => {
           console.log('fail')
         }
       }
-
 
     const handleButtonClick = async () => {
         setLoading(true)
@@ -106,15 +107,6 @@ const UserAction = ({params , rowId, setRowId } : UserActionProps) => {
                     }}
                     />
                     )}
-                <Fab className='bg-red-500 hover:bg-red-700' 
-                sx={{
-                    width: 40,
-                    height: 40,
-                }}
-                disabled={params.id !== rowId || loading}
-                >
-                <Delete />
-                </Fab>
                 
             </Box>
            
