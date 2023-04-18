@@ -1,11 +1,14 @@
 import UserAction from './UserAction';
 import { useState, useMemo } from 'react';
 import { green } from '@mui/material/colors';
-import { Delete, Check } from '@mui/icons-material';
-import AddIcon from '@mui/icons-material/Add';
 import { CrawledJob, Job } from '@prisma/client';
+import EditIcon from '@mui/icons-material/Edit';
+import CloseIcon from '@mui/icons-material/Close';
+import { Delete, Check } from '@mui/icons-material';
+import NavigationIcon from '@mui/icons-material/Navigation';
 import { Box, Typography, Avatar, Fab, CircularProgress } from '@mui/material';
-import { DataGrid, GridColDef, GridRowId, GridRowSpacingParams, gridClasses, GridRenderCellParams } from '@mui/x-data-grid';
+import { DataGrid, GridRowId, GridRowSpacingParams, gridClasses, GridRenderCellParams } from '@mui/x-data-grid';
+
 
 
 const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
@@ -13,7 +16,9 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
   const [rowId, setRowId] = useState('')
   const [loading, setLoading] = useState<boolean>(false)
   const [success, setSuccess] = useState<boolean>(false)
+  const [editTable , setEditTable] = useState<boolean>(false)
   const [selectedJobs, setSelectedJobs] = useState<GridRowId[]>([])
+
     
     const columns = useMemo(() => [
       { field: 'id', headerName: 'ID', width: 200, editable: true },
@@ -66,10 +71,23 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
           }, 2000)
         }
         else {
-          console.log('fail')
-          console.log(res)
           setLoading(false)
           
+        }
+      }
+
+      const handleConfirm = async () => {
+        console.log('confirm')
+        const res = await fetch ('/api/jobs/confirm', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({selectedJobs: selectedJobs}),
+        })
+        if (res.ok){
+          console.log('success')
+        }
+        else {
+          console.log('error')
         }
       }
 
@@ -84,18 +102,31 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
 
           </Typography>
           <div className="icon w-full flex items-end justify-end gap-x-4 mb-2 mr-5">
-          <Fab color="error" aria-label="add" className=' bg-blue-400 hover:bg-blue-500'
-            sx={{
-              width: 40,
-              height: 40,
-              
-          }}
-          
+          {editTable ? (
+          <Fab color="secondary" aria-label="edit" className='bg-rose-300 hover:bg-red-500'
+          onClick={() => setEditTable(!editTable)}
           >
-            <AddIcon />
+            <CloseIcon />
           </Fab>
-
-          {selectedJobs.length > 0 ? (
+          ) : (
+            <Fab color="secondary" aria-label="edit" className='bg-gray-200 hover:bg-gray-400'
+            onClick={() => setEditTable(!editTable)}
+            >
+              <EditIcon />
+            </Fab>
+          
+          )}
+         
+        {editTable && (
+          <>
+                <Fab variant="extended" color="primary" aria-label="add" className=' bg-gray-200' 
+                disabled={selectedJobs.length > 0 ? false  : true || loading || success}
+                onClick={() => handleConfirm()}
+                >
+                  <NavigationIcon sx={{ mr: 1 }} 
+                  />
+                  Confirm jobs
+                </Fab>  
                 <Box className='flex justify-center items-center gap-x-5'
                 gap={2}
                 sx = {{
@@ -121,10 +152,11 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
                 ) : (
                   <Fab className='bg-red-400 hover:bg-red-500' 
                   sx={{
-                      width: 40,
-                      height: 40,
+                      width: 50,
+                      height: 50,
                       
                   }}
+                  disabled={selectedJobs.length > 0 ? false  : true || loading || success}
                   onClick={() => handleDelete()}
                   >
                   <Delete />
@@ -145,18 +177,18 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
                         )}
                     
                 </Box>
-           ): (
-            <></>
-          )}
-           
+          
+           </>
+           )}
           </div>
+          
 
           <DataGrid
             columns={columns}
             rows={rows}
             getRowId={(row) => row.id}
             pageSizeOptions={[13, 50, 100]}  
-            checkboxSelection
+            checkboxSelection={editTable}
             getRowSpacing={(params : GridRowSpacingParams) => ({
               top: params.isFirstVisible ? 0 : 5,
               bottom: params.isLastVisible ? 0 : 5,
@@ -167,7 +199,9 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
                   theme.palette.mode === 'light' ? `grey[200]` : `grey.900`,
                 
                 height: 80,
+               
                 },
+                pl: 0.7,
             }}
 
             onCellEditStop={(params) => setRowId(params.id.toString())}
@@ -183,6 +217,8 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
           />          
 
         </Box>
+        
+     
 
         </>
      );
