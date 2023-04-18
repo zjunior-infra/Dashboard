@@ -1,6 +1,7 @@
 import UserAction from './UserAction';
 import { useState, useMemo } from 'react';
 import { green } from '@mui/material/colors';
+import EditButtons from './editButtons';
 import { CrawledJob, Job } from '@prisma/client';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
@@ -127,56 +128,8 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
                   />
                   Confirm jobs
                 </Fab>  
-                <Box className='flex justify-center items-center gap-x-5'
-                gap={2}
-                sx = {{
-                    
-                    position: 'relative',
-    
-    
-                }}
-                >
-                {success ? (
-                    <Fab className='bg-green-500 hover:bg-green-700'
-                    color="primary"
-                    
-                    sx={{
-                        width: 40,
-                        height: 40, 
-                       
-                    }}
-                   
-                    >
-                    <Check />
-                    </Fab>
-                ) : (
-                  <Fab className='bg-red-400 hover:bg-red-500' 
-                  sx={{
-                      width: 50,
-                      height: 50,
-                      
-                  }}
-                  disabled={selectedJobs.length > 0 ? false  : true || loading || success}
-                  onClick={() => handleDelete()}
-                  >
-                  <Delete />
-              </Fab>
-          )}
-                    {loading && (
-                        <CircularProgress
-                        size={52}
-                        sx={{
-                            color: green[500],
-                            position: 'absolute',
-                            top: -6,
-                            left: -6,
-                            zIndex: 1,
-    
-                        }}
-                        />
-                        )}
-                    
-                </Box>
+                
+                <EditButtons selectedJobs={selectedJobs} handleDelete={handleDelete} loading={loading} success={success} setLoading={setLoading} setSuccess={setSuccess}/>
           
            </>
            )}
