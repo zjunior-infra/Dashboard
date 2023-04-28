@@ -16,11 +16,16 @@ export default function Home( {jobs}:{jobs:CrawledJob[]}) {
 }
 
 export async function getServerSideProps(){
-  const jobs = await getJobs();
+  try{
+    const jobs = await getJobs();
   return {
     props:{
       jobs
     }
+  }
+  }
+  catch(err){
+    return err
   }
 
 }
