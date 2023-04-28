@@ -16,7 +16,7 @@ export default function Home( {jobs}:{jobs:CrawledJob[]}) {
 }
 
 export async function getServerSideProps(){
-  const jobs =await getJobs();
+  const jobs = await getJobs();
   return {
     props:{
       jobs
