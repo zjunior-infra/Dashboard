@@ -1,7 +1,7 @@
 import UserAction from './UserAction';
 import { toast } from 'react-toastify';
 import EditButtons from './editButtons';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { CrawledJob, Job } from '@prisma/client';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
@@ -10,9 +10,13 @@ import NavigationIcon from '@mui/icons-material/Navigation';
 import { Box, Typography, Avatar, Fab } from '@mui/material';
 import { DataGrid, GridRowId, GridRowSpacingParams, gridClasses, GridRenderCellParams } from '@mui/x-data-grid';
 
+interface DataTableProps {
+  jobs: CrawledJob[];
+  refershData: () => void;
+}
 
 
-const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
+const DataTable = ( {jobs, refershData}:DataTableProps ) => {
 
   const [rowId, setRowId] = useState('')
   const [loading, setLoading] = useState<boolean>(false)
@@ -22,6 +26,7 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
   const [ key, setKey] = useState<number>(0)
   const [editTable , setEditTable] = useState<boolean>(false)
   const [selectedJobs, setSelectedJobs] = useState<GridRowId[]>([])
+  const [crawlerjobs , setJobs] = useState<CrawledJob[]>(jobs)
 
     
     const columns = useMemo(() => [
@@ -43,8 +48,8 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
 
     ], [rowId])
 
-      let rows = jobs.map((job:Job)=>{
-        const {id,company,title,link,deadline,logo,skills}=job;
+      let rows = crawlerjobs.map((crawlerjobs:Job)=>{
+        const {id,company,title,link,deadline,logo,skills}=crawlerjobs;
         return {
           id,
           company,
@@ -115,7 +120,7 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
         }, 5000)
       }
 
-      
+     
     return ( 
         <>
         <Box sx={{ height: 550, width: '100%' }} >
@@ -219,7 +224,9 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
               <div className="w-160 h-96 grid grid-cols-1 text-center py-10 px-3 font-nunito font-extrabold ">
                 <div className="text-4xl text-white self-start">Crawler finished successfully</div>
                 <div  className='self-center flex items-center justify-center '>
-                <button className="button  text-white bg-blue-400 py-3 px-5 rounded-2xl  ">Refresh table</button>
+                <button className="button  text-white bg-blue-400 py-3 px-5 rounded-2xl  "
+                onClick={refershData}
+                >Refresh table</button>
                 </div>
                 <p className='self-end text-xs text-white '>if you have unfinished business you can close the popup and refresh it manually later</p>
 
