@@ -15,6 +15,9 @@ module.exports = {
       },
       colors: {
         dark_bg : '#24292e'
+      },
+      width : {
+        '160' : '43rem'
       }
     },
   },
