@@ -111,13 +111,23 @@ const DataTable = ( {jobs, refershData}:DataTableProps ) => {
 
       const handleCrawler = async () => {
         setCrawlerLoading(true)
-        toast.success(`Crawler started successfully feel free to continue using the website normally`, {autoClose: 3000})
-        
-        setTimeout(() => {
+
+        const res = await fetch ('/api/jobs/crawler', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+        })
+        if (res.ok){
           setCrawlerLoading(false)
           setCrawlerSuccess(true)
           toast.success(`Crawler finished successfully`)
-        }, 5000)
+        }
+        else {
+          setCrawlerLoading(false)
+          setCrawlerSuccess(false)
+          toast.error(`Error running the crawler`)
+        }
+
+
       }
 
      
