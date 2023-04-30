@@ -1,17 +1,33 @@
+import Head from 'next/head';
 import { getJobs } from '@/Database';
-import DataTable from '@/components/DataGrid'
+import { useRouter } from 'next/router';
 import { CrawledJob } from '@prisma/client';
+import DataTable from '@/components/DataGrid'
 
 
 export default function Home( {jobs}:{jobs:CrawledJob[]}) {
+  
+  const router = useRouter();
+  
+  const refershData = () => {
+      router.reload();
 
+  }
 
   return (
-    <main className="flex min-h-screen w-full flex-col items-center justify-between p-24">
+    <>
+    <Head>
+      <title>zJunior | Dashboard</title>
+    </Head>
 
-      <DataTable jobs={jobs} />
+    
+    <main className="flex min-h-screen w-full flex-col items-center justify-between p-24">
+      
+
+      <DataTable jobs={jobs} refershData={refershData} />
      
     </main>
+    </>
   )
 }
 

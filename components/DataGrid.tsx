@@ -5,20 +5,28 @@ import { useState, useMemo, useEffect } from 'react';
 import { CrawledJob, Job } from '@prisma/client';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
+import LoadingButton from '@mui/lab/LoadingButton';
 import NavigationIcon from '@mui/icons-material/Navigation';
 import { Box, Typography, Avatar, Fab } from '@mui/material';
 import { DataGrid, GridRowId, GridRowSpacingParams, gridClasses, GridRenderCellParams } from '@mui/x-data-grid';
 
+interface DataTableProps {
+  jobs: CrawledJob[];
+  refershData: () => void;
+}
 
 
-const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
+const DataTable = ( {jobs, refershData}:DataTableProps ) => {
 
   const [rowId, setRowId] = useState('')
   const [loading, setLoading] = useState<boolean>(false)
   const [success, setSuccess] = useState<boolean>(false)
+  const [crawlerLoading, setCrawlerLoading] = useState<boolean>(false)
+  const [crawlerSuccess, setCrawlerSuccess] = useState<boolean>(false)
   const [ key, setKey] = useState<number>(0)
   const [editTable , setEditTable] = useState<boolean>(false)
   const [selectedJobs, setSelectedJobs] = useState<GridRowId[]>([])
+  const [crawlerjobs , setJobs] = useState<CrawledJob[]>(jobs)
 
     
     const columns = useMemo(() => [
@@ -40,8 +48,8 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
 
     ], [rowId])
 
-      let rows = jobs.map((job:Job)=>{
-        const {id,company,title,link,deadline,logo,skills}=job;
+      let rows = crawlerjobs.map((crawlerjobs:Job)=>{
+        const {id,company,title,link,deadline,logo,skills}=crawlerjobs;
         return {
           id,
           company,
@@ -101,9 +109,31 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
         }
       }
 
+      const handleCrawler = async () => {
+        setCrawlerLoading(true)
+
+        const res = await fetch ('/api/jobs/crawler', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+        })
+        if (res.ok){
+          setCrawlerLoading(false)
+          setCrawlerSuccess(true)
+          toast.success(`Crawler finished successfully`)
+        }
+        else {
+          setCrawlerLoading(false)
+          setCrawlerSuccess(false)
+          toast.error(`Error running the crawler`)
+        }
+
+
+      }
+
+     
     return ( 
         <>
-        <Box sx={{ height: 600, width: '100%' }}>
+        <Box sx={{ height: 550, width: '100%' }} >
 
           <Typography variant="h3" component="h3"  color={'white'}
             sx={{textAlign:'center', mt:3, mb:3}}
@@ -142,6 +172,17 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
           
            </>
            )}
+
+            <LoadingButton
+            onClick={handleCrawler}
+            loading={crawlerLoading}
+            variant="outlined"
+            className='p-2 mb-1'
+          >
+               <span className=' text-base font-roboto font-medium'>charge JuniorJobs</span>
+          </LoadingButton>
+
+
           </div>
           
 
@@ -179,6 +220,32 @@ const DataTable = ( {jobs}:{jobs:CrawledJob[]} ) => {
           />          
 
         </Box>
+
+        {
+          crawlerSuccess && (
+            <div className=' flex flex-col fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-dark_bg rounded-2xl
+            shadow-slate-300 shadow-2xl  w-160 h-96'>
+              <div className=' flex items-end justify-end pr-3 pt-3 cursor-pointer'
+              onClick={() => setCrawlerSuccess(false)}
+              >
+                <CloseIcon style={{color : 'white'}} />
+
+              </div>
+              <div className="w-160 h-96 grid grid-cols-1 text-center py-10 px-3 font-nunito font-extrabold ">
+                <div className="text-4xl text-white self-start">Crawler finished successfully</div>
+                <div  className='self-center flex items-center justify-center '>
+                <button className="button  text-white bg-blue-400 py-3 px-5 rounded-2xl  "
+                onClick={refershData}
+                >Refresh table</button>
+                </div>
+                <p className='self-end text-xs text-white '>if you have unfinished business you can close the popup and refresh it manually later</p>
+
+              </div>
+
+
+            </div>
+            )
+        }
         
      
 
