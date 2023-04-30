@@ -3,6 +3,7 @@ import { getJobs } from '@/Database';
 import { useRouter } from 'next/router';
 import { CrawledJob } from '@prisma/client';
 import DataTable from '@/components/DataGrid'
+import type { Job } from '@/Database/interface';
 
 
 export default function Home( {jobs}:{jobs:CrawledJob[]}) {
@@ -10,8 +11,7 @@ export default function Home( {jobs}:{jobs:CrawledJob[]}) {
   const router = useRouter();
   
   const refershData = () => {
-      router.reload();
-
+    router.replace(router.asPath);
   }
 
   return (
@@ -32,7 +32,8 @@ export default function Home( {jobs}:{jobs:CrawledJob[]}) {
 }
 
 export async function getServerSideProps(){
-  const jobs = await getJobs();
+  const res = await fetch(`${process.env.NEXTAUTH_URL}/api/jobs/jobs.json`)
+  const jobs:Job[] = await res.json()
   return {
     props:{
       jobs

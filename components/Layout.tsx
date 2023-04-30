@@ -8,8 +8,6 @@ interface LayoutProps {
 const Layout = ( {children} : LayoutProps ) => {
 
     const {theme, setTheme} = useTheme()
-
-    console.log(theme)
     return (
         <div className=" bg-dark_bg">
             
