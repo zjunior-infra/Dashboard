@@ -32,8 +32,7 @@ export default function Home( {jobs}:{jobs:CrawledJob[]}) {
 }
 
 export async function getServerSideProps(){
-  const res = await fetch(`${process.env.NEXTAUTH_URL}/api/jobs/jobs.json`)
-  const jobs:Job[] = await res.json()
+  const jobs = await getJobs();
   return {
     props:{
       jobs
