@@ -130,10 +130,16 @@ const DataTable = ( {jobs, refershData}:DataTableProps ) => {
 
       }
 
+      const handeelRefershData = async () => {
+        refershData()
+        setCrawlerSuccess(false)
+        setKey((prev) => prev + 1)
+      }
+
      
     return ( 
         <>
-        <Box sx={{ height: 550, width: '100%' }} >
+        <Box sx={{ height: 550, width: '100%' }} className="z-0" >
 
           <Typography variant="h3" component="h3"  color={'white'}
             sx={{textAlign:'center', mt:3, mb:3}}
@@ -223,7 +229,7 @@ const DataTable = ( {jobs, refershData}:DataTableProps ) => {
 
         {
           crawlerSuccess && (
-            <div className=' flex flex-col fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-dark_bg rounded-2xl
+            <div className=' flex flex-col fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-dark_bg rounded-2xl z-10
             shadow-slate-300 shadow-2xl  w-160 h-96'>
               <div className=' flex items-end justify-end pr-3 pt-3 cursor-pointer'
               onClick={() => setCrawlerSuccess(false)}
@@ -235,7 +241,7 @@ const DataTable = ( {jobs, refershData}:DataTableProps ) => {
                 <div className="text-4xl text-white self-start">Crawler finished successfully</div>
                 <div  className='self-center flex items-center justify-center '>
                 <button className="button  text-white bg-blue-400 py-3 px-5 rounded-2xl  "
-                onClick={refershData}
+                onClick={handeelRefershData}
                 >Refresh table</button>
                 </div>
                 <p className='self-end text-xs text-white '>if you have unfinished business you can close the popup and refresh it manually later</p>
