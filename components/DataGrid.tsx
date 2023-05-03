@@ -42,7 +42,7 @@ const DataTable = ( {jobs, refershData}:DataTableProps ) => {
 
       { field: 'actions', headerName: 'Actions', type: 'actions',
         renderCell: (params:GridRenderCellParams) =>
-          <UserAction params={params} rowId={rowId} setRowId={setRowId} selectedJobs={selectedJobs} setSelectedJobs={setSelectedJobs} setKey={setKey}/>
+          <UserAction params={params} rowId={rowId} setRowId={setRowId} />
         ,  
       },
 

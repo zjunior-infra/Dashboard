@@ -13,12 +13,10 @@ interface UserActionProps {
     params : GridRenderCellParams
     rowId : String
     setRowId :Dispatch<SetStateAction<string>>
-    selectedJobs: GridRowId[]
-    setSelectedJobs : Dispatch<SetStateAction<GridRowId[]>>
-    setKey : Dispatch<SetStateAction<number>>
+ 
 }
 
-const UserAction = ({params , rowId, setRowId, selectedJobs, setSelectedJobs, setKey } : UserActionProps) => {
+const UserAction = ({params , rowId, setRowId} : UserActionProps) => {
     const [loading, setLoading] = useState<boolean>(false)
     const [success, setSuccess] = useState<boolean>(false)
     const [adjustedJobs, setAdjustedJobs] = useState<Job[]>([])
@@ -33,8 +31,6 @@ const UserAction = ({params , rowId, setRowId, selectedJobs, setSelectedJobs, se
         if (res.ok){
           console.log('success')
           toast.success('Job updated successfully')
-          setKey(key => key + 1)
-          setAdjustedJobs([])
         }
         else {
           console.log('fail')
