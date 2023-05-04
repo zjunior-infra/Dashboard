@@ -1,38 +1,82 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+# Crawler's Dashboard
 
-First, run the development server:
+Dashboard is resposible about monitor the Oppurtunities and do a CRUD operations, and it can run the Crawler workflow
+
+All the jobs that has been crawled inserted to CrawledJob table, any modifictation on these data happens on this table, after pushing these data the inserted into two tables one for presistensy (ArchivedJob) and the other for the main table (Job)
+
+
+## Contributing
+
+Contributions are always welcome!
+
+See the setup below for ways to get started.
+
+Please adhere to this orgs `code of conduct`.
+
+
+## Run Locally
+
+Fork the project
+
+then clone your Fork
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+  git clone https://link-you-your fork
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Install dependencies
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+```bash
+  npm ci
+```
+setup the database - we are using mysql with prisma orm
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+```bash
+ docker-compose up
+```
+this is will run a container that has MySQL db on localhost:3306
+with USERNAME: admin
+Password: Password
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+Create your env
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+your connection string will be `mysql://admin@password@localhost:3306/db`
 
-## Learn More
+Generate the Schema
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+  npm run gen
+```
+to push your schema into the database
+```bash
+  npx prisma db push
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This will add seeds jobs to your Crawled job Table
+```bash
+  npx prisma db seed
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Start the Server
+```bash
+  npm run dev
+```
+## Environment Variables
 
-## Deploy on Vercel
+To run this project, you will need to add the following environment variables to your .env file
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+`MAIN_DATABASE_URL`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+
+## FAQ
+
+#### Can I use something else rather than Docker ?
+
+Yes, you can get a mysql database from any source you would like
+
+we recommend PlantScale as it has a free tier that suits the development
+
+
+
