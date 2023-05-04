@@ -43,7 +43,7 @@ async function main(){
     const seed = await prisma.crawledJob.createMany({
         data: CrawledJobs
     })
-    console.log(seed)
+    console.log({seed})
 }
 
 main()
