@@ -41,7 +41,7 @@ Password: Password
 
 Create your env
 
-your connection string will be `mysql://admin@password@localhost:3306/db`
+your connection string will be `mysql://admin:password@localhost:3306/db`
 
 Generate the Schema
 

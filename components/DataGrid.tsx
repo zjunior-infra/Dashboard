@@ -33,7 +33,29 @@ const DataTable = ( {jobs, refershData}:DataTableProps ) => {
       { field: 'id', headerName: 'ID', width: 200, editable: true },
       { field: `company`, headerName: 'Company', width: 140 , editable: true },
       { field: `title`, headerName: 'Title', width: 160 , editable: true },
-      { field: `link`, headerName: 'Link', width: 450 , editable: true },
+     
+      { field: `link`, headerName: 'Link', width: 450, editable: true,
+        renderCell: (params: GridRenderCellParams) => (
+          <a 
+            href={params.row.link} 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            style={{ textDecoration: 'none' }}
+            onMouseEnter={(e) => {
+              const target = e.target as HTMLElement;
+              target.style.textDecoration = 'underline';
+            }}
+            onMouseLeave={(e) => {
+              const target = e.target as HTMLElement;
+              target.style.textDecoration = 'none';
+            }}
+          >
+            {params.row.link}
+          </a>
+        ),
+      },
+      
+
       {field: `deadline`, headerName: 'Deadline', width: 140, editable: true  },
       {field: `logo`, headerName: 'Logo', width: 70, editable: true ,
         renderCell: (params:GridRenderCellParams) => <Avatar alt="Remy Sharp" src={params.row.logo} /> },
@@ -144,7 +166,7 @@ const DataTable = ( {jobs, refershData}:DataTableProps ) => {
           <Typography variant="h3" component="h3"  color={'white'}
             sx={{textAlign:'center', mt:3, mb:3}}
           >
-            Mange Jobs
+            Manage Jobs
 
           </Typography>
           <div className="icon w-full flex items-end justify-end gap-x-4 mb-2 mr-5">
