@@ -34,7 +34,7 @@ const DataTable = ( {jobs, refershData}:DataTableProps ) => {
       { field: `company`, headerName: 'Company', width: 140 , editable: true },
       { field: `title`, headerName: 'Title', width: 160 , editable: true },
      
-      { field: `link`, headerName: 'Link', width: 450, editable: true,
+      { field: `link`, headerName: 'Link', width: 250, editable: true,
         renderCell: (params: GridRenderCellParams) => (
           <a 
             href={params.row.link} 
@@ -57,6 +57,7 @@ const DataTable = ( {jobs, refershData}:DataTableProps ) => {
       
 
       {field: `deadline`, headerName: 'Deadline', width: 140, editable: true  },
+      {field: 'type', headerName:'Type', width:140 , editable: true},
       {field: `logo`, headerName: 'Logo', width: 70, editable: true ,
         renderCell: (params:GridRenderCellParams) => <Avatar alt="Remy Sharp" src={params.row.logo} /> },
 
@@ -71,12 +72,13 @@ const DataTable = ( {jobs, refershData}:DataTableProps ) => {
     ], [rowId])
 
       let rows = crawlerjobs.map((crawlerjobs:Job)=>{
-        const {id,company,title,link,deadline,logo,skills}=crawlerjobs;
+        const {id,company,title,type,link,deadline,logo,skills}=crawlerjobs;
         return {
           id,
           company,
           title,
           link,
+          type,
           deadline,
           logo,
           skills,
