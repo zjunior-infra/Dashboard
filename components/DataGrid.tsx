@@ -30,7 +30,7 @@ const DataTable = ( {jobs, refershData}:DataTableProps ) => {
 
     
     const columns = useMemo(() => [
-      { field: 'id', headerName: 'ID', width: 200, editable: true },
+      { field: 'id', headerName: 'ID', width: 100, editable: true },
       { field: `company`, headerName: 'Company', width: 140 , editable: true },
       { field: `title`, headerName: 'Title', width: 160 , editable: true },
      
