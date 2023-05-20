@@ -26,10 +26,45 @@ export default function Home( {jobs}:{jobs:CrawledJob[]}) {
 }
 
 export async function getServerSideProps(){
-  const jobs = await getJobs();
+  // const jobs = await getJobs();
   return {
     props:{
-      jobs
+      [
+        {
+            id:"20022",
+            company:"Apple",
+            title:"Software engineer",
+            link:"https://zjunior.com",
+            email:"",
+            type:"Internship",
+            deadline:"2023-06-02",
+            logo:"https:/zjunior.com/images/logo.png",
+            skills:"React, NodeJs, Docker"
+        },
+        {
+            id:"23132",
+            company:"Google",
+            title:"Software Engineer",
+            link:"https://zjunior.com",
+            email:"",
+            type:"Internship",
+            deadline:"2023-06-02",
+            logo:"https:/zjunior.com/images/logo.png",
+            skills:"React, NodeJs, Docker"
+        },
+        {
+            id:"21312412",
+            company:"zJunior",
+            title:"Software engineer",
+            link:"https://zjunior.com",
+            email:"",
+            type:"EntryLevel",
+            deadline:"2023-06-02",
+            logo:"https:/zjunior.com/images/logo.png",
+            skills:"React, NodeJs, Docker"
+        },
+    
+    ]
     }
   }
 
