@@ -12,11 +12,10 @@ import { DataGrid, GridRowId, GridRowSpacingParams, gridClasses, GridRenderCellP
 
 interface DataTableProps {
   jobs: CrawledJob[];
-  refershData: () => void;
 }
 
 
-const DataTable = ( {jobs, refershData}:DataTableProps ) => {
+const DataTable = ( {jobs}:DataTableProps ) => {
 
   const [rowId, setRowId] = useState('')
   const [loading, setLoading] = useState<boolean>(false)
@@ -153,11 +152,6 @@ const DataTable = ( {jobs, refershData}:DataTableProps ) => {
 
       }
 
-      const handeelRefershData = async () => {
-        refershData()
-        setCrawlerSuccess(false)
-        setKey((prev) => prev + 1)
-      }
 
      
     return ( 
@@ -263,7 +257,6 @@ const DataTable = ( {jobs, refershData}:DataTableProps ) => {
                 <div className="text-4xl text-white self-start">Crawler finished successfully</div>
                 <div  className='self-center flex items-center justify-center '>
                 <button className="button  text-white bg-blue-400 py-3 px-5 rounded-2xl  "
-                onClick={handeelRefershData}
                 >Refresh table</button>
                 </div>
                 <p className='self-end text-xs text-white '>if you have unfinished business you can close the popup and refresh it manually later</p>
