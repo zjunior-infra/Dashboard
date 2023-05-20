@@ -22,7 +22,7 @@ const UserAction = ({params , rowId, setRowId} : UserActionProps) => {
     const [adjustedJobs, setAdjustedJobs] = useState<Job[]>([])
 
     const handelUpdate = async ()=>{
-        const res = await fetch ('/api/jobs/update', {
+        const res = await fetch ('/api/update', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({selectedJobs: adjustedJobs}),

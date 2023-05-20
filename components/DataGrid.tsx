@@ -88,7 +88,7 @@ const DataTable = ( {jobs, refershData}:DataTableProps ) => {
 
       const handleDelete = async () => {
         setLoading(true)
-        const res = await fetch ('/api/jobs/delete', {
+        const res = await fetch ('/api/delete', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({selectedJobs: selectedJobs}),
@@ -116,7 +116,7 @@ const DataTable = ( {jobs, refershData}:DataTableProps ) => {
 
       const handleConfirm = async () => {
         console.log('confirm')
-        const res = await fetch ('/api/jobs/confirm', {
+        const res = await fetch ('/api/confirm', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({selectedJobs: selectedJobs}),
@@ -136,7 +136,7 @@ const DataTable = ( {jobs, refershData}:DataTableProps ) => {
       const handleCrawler = async () => {
         setCrawlerLoading(true)
 
-        const res = await fetch ('/api/jobs/crawler', {
+        const res = await fetch ('/api/crawler', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
         })
