@@ -18,7 +18,7 @@ export default function Home( {jobs}:{jobs:CrawledJob[]}) {
     <main className="flex min-h-screen w-full flex-col items-center justify-between p-24">
       
 
-      <DataTable jobs={jobs} refershData={refershData} />
+      <DataTable jobs={jobs} />
      
     </main>
     </>
