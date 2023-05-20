@@ -70,7 +70,7 @@ const DataTable = ( {jobs, refershData}:DataTableProps ) => {
       },
 
     ], [rowId])
-
+    // this should be called after the set render, avoiding the limit
       let rows = crawlerjobs.map((crawlerjobs:Job)=>{
         const {id,company,title,type,link,deadline,logo,skills}=crawlerjobs;
         return {
@@ -115,7 +115,6 @@ const DataTable = ( {jobs, refershData}:DataTableProps ) => {
       }
 
       const handleConfirm = async () => {
-        console.log('confirm')
         const res = await fetch ('/api/confirm', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -243,7 +242,6 @@ const DataTable = ( {jobs, refershData}:DataTableProps ) => {
 
             onRowSelectionModelChange={(params) => {
               setSelectedJobs(params)
-              console.log(params)
               
             }}
             

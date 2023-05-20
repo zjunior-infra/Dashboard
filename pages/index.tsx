@@ -7,12 +7,6 @@ import type { Job } from '@/Database/interface';
 
 
 export default function Home( {jobs}:{jobs:CrawledJob[]}) {
-  
-  const router = useRouter();
-  
-  const refershData = () => {
-    router.replace(router.asPath);
-  }
 
   return (
     <>
