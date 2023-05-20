@@ -1,3 +1,4 @@
+'use client'
 import UserAction from './UserAction';
 import { toast } from 'react-toastify';
 import EditButtons from './editButtons';
