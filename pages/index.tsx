@@ -5,7 +5,7 @@ import { CrawledJob } from '@prisma/client';
 import DataTable from '@/components/DataGrid'
 import type { Job } from '@/Database/interface';
 
-export const runtime = 'edge';
+
 
 export default function Home( {jobs}:{jobs:CrawledJob[]}) {
 
