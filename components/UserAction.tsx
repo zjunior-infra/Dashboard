@@ -1,3 +1,5 @@
+'use client'
+
 import { toast } from 'react-toastify';
 import { useState, useEffect } from 'react';
 import { green } from '@mui/material/colors';
