@@ -71,15 +71,15 @@ const DataTable = ( {jobs}:DataTableProps ) => {
 
     ], [rowId])
     // this should be called after the set render, avoiding the limit
-      let rows = crawlerjobs.map((crawlerjobs:Job)=>{
-        const {id,company,title,type,link,deadline,logo,skills}=crawlerjobs;
+      let rows = crawlerjobs.map((crawlerjobs:CrawledOpportunity)=>{
+        const {id,company,title,description,type,link,logo,skills}=crawlerjobs;
         return {
           id,
           company,
           title,
           link,
           type,
-          deadline,
+          description,
           logo,
           skills,
         }
