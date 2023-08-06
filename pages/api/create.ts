@@ -13,15 +13,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.log('this is new job', newJob);
 
     try {
-        const newJob = await prisma.crawledJob.create({
+        const newJob = await prisma.crawledOpportunity.create({
             data: {
             id : req.body.id,
             title: req.body.title,
             company: req.body.company,
+            description: req.body.description,
             link: req.body.link,
-            email: req.body.email,
             type: req.body.type,
-            deadline: req.body.deadline,
             logo: req.body.logo,
             skills: req.body.skills,
             },

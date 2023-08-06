@@ -1,8 +1,9 @@
+'use client'
 import UserAction from './UserAction';
 import { toast } from 'react-toastify';
 import EditButtons from './editButtons';
 import { useState, useMemo, useEffect } from 'react';
-import { CrawledJob, Job } from '@prisma/client';
+import { CrawledOpportunity } from '@prisma/client';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -11,12 +12,11 @@ import { Box, Typography, Avatar, Fab } from '@mui/material';
 import { DataGrid, GridRowId, GridRowSpacingParams, gridClasses, GridRenderCellParams } from '@mui/x-data-grid';
 
 interface DataTableProps {
-  jobs: CrawledJob[];
-  refershData: () => void;
+  jobs: CrawledOpportunity[];
 }
 
 
-const DataTable = ( {jobs, refershData}:DataTableProps ) => {
+const DataTable = ( {jobs}:DataTableProps ) => {
 
   const [rowId, setRowId] = useState('')
   const [loading, setLoading] = useState<boolean>(false)
@@ -26,7 +26,7 @@ const DataTable = ( {jobs, refershData}:DataTableProps ) => {
   const [ key, setKey] = useState<number>(0)
   const [editTable , setEditTable] = useState<boolean>(false)
   const [selectedJobs, setSelectedJobs] = useState<GridRowId[]>([])
-  const [crawlerjobs , setJobs] = useState<CrawledJob[]>(jobs)
+  const [crawlerjobs , setJobs] = useState<CrawledOpportunity[]>(jobs)
 
     
     const columns = useMemo(() => [
@@ -70,16 +70,16 @@ const DataTable = ( {jobs, refershData}:DataTableProps ) => {
       },
 
     ], [rowId])
-
-      let rows = crawlerjobs.map((crawlerjobs:Job)=>{
-        const {id,company,title,type,link,deadline,logo,skills}=crawlerjobs;
+    // this should be called after the set render, avoiding the limit
+      let rows = crawlerjobs.map((crawlerjobs:CrawledOpportunity)=>{
+        const {id,company,title,description,type,link,logo,skills}=crawlerjobs;
         return {
           id,
           company,
           title,
           link,
           type,
-          deadline,
+          description,
           logo,
           skills,
         }
@@ -115,7 +115,6 @@ const DataTable = ( {jobs, refershData}:DataTableProps ) => {
       }
 
       const handleConfirm = async () => {
-        console.log('confirm')
         const res = await fetch ('/api/confirm', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -154,11 +153,6 @@ const DataTable = ( {jobs, refershData}:DataTableProps ) => {
 
       }
 
-      const handeelRefershData = async () => {
-        refershData()
-        setCrawlerSuccess(false)
-        setKey((prev) => prev + 1)
-      }
 
      
     return ( 
@@ -243,7 +237,6 @@ const DataTable = ( {jobs, refershData}:DataTableProps ) => {
 
             onRowSelectionModelChange={(params) => {
               setSelectedJobs(params)
-              console.log(params)
               
             }}
             
@@ -265,7 +258,6 @@ const DataTable = ( {jobs, refershData}:DataTableProps ) => {
                 <div className="text-4xl text-white self-start">Crawler finished successfully</div>
                 <div  className='self-center flex items-center justify-center '>
                 <button className="button  text-white bg-blue-400 py-3 px-5 rounded-2xl  "
-                onClick={handeelRefershData}
                 >Refresh table</button>
                 </div>
                 <p className='self-end text-xs text-white '>if you have unfinished business you can close the popup and refresh it manually later</p>

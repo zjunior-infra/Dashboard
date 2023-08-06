@@ -1,5 +1,7 @@
+'use client'
 import Header from "./Header";
 import { useTheme } from 'next-themes'
+
 
 interface LayoutProps {
     children: React.ReactNode;

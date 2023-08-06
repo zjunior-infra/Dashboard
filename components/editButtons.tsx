@@ -1,3 +1,4 @@
+'use client'
 import { useState } from 'react';
 import { GridRowId } from '@mui/x-data-grid';
 import { green } from '@mui/material/colors';

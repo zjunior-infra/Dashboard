@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { CrawledJob, PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
 
 const prisma = new PrismaClient();
@@ -12,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { selectedJobs } = req.body;
 
     try {
-      const confirmedJobs = await prisma.crawledJob.findMany({
+      const confirmedJobs = await prisma.crawledOpportunity.findMany({
         where: {
           id: {
             in: selectedJobs,
@@ -20,15 +20,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         },
       });
 
-      const newJobsInArhciveTABLE = await prisma.archivedJob.createMany({
-        data : confirmedJobs,
-      })
+      // const newJobsInArhciveTABLE = await prisma.archivedJob.createMany({
+        // data : confirmedJobs,
+      // })
 
-      const newJobsInJOBTABLE = await prisma.job.createMany({
+      const newJobsInJOBTABLE = await prisma.opportunity.createMany({
         data : confirmedJobs,
         })
 
-      const deletedJobsInCRAWLEDJOBTABLE = await prisma.crawledJob.deleteMany({
+      const deletedJobsInCRAWLEDJOBTABLE = await prisma.crawledOpportunity.deleteMany({
         where: {
             id: {
                 in: selectedJobs,

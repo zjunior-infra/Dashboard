@@ -1,9 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { CrawledJob, PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
 
 const prisma = new PrismaClient();
-
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'POST') {
@@ -15,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   
 
     try {
-      const deletedAuthor = await prisma.crawledJob.deleteMany({
+      const deletedAuthor = await prisma.crawledOpportunity.deleteMany({
         where: {
           id: {
             in: selectedJobs,
