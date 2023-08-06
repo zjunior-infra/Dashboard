@@ -3,7 +3,7 @@ import UserAction from './UserAction';
 import { toast } from 'react-toastify';
 import EditButtons from './editButtons';
 import { useState, useMemo, useEffect } from 'react';
-import { CrawledJob, Job } from '@prisma/client';
+import { CrawledOpportunity } from '@prisma/client';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -12,7 +12,7 @@ import { Box, Typography, Avatar, Fab } from '@mui/material';
 import { DataGrid, GridRowId, GridRowSpacingParams, gridClasses, GridRenderCellParams } from '@mui/x-data-grid';
 
 interface DataTableProps {
-  jobs: CrawledJob[];
+  jobs: CrawledOpportunity[];
 }
 
 
@@ -26,7 +26,7 @@ const DataTable = ( {jobs}:DataTableProps ) => {
   const [ key, setKey] = useState<number>(0)
   const [editTable , setEditTable] = useState<boolean>(false)
   const [selectedJobs, setSelectedJobs] = useState<GridRowId[]>([])
-  const [crawlerjobs , setJobs] = useState<CrawledJob[]>(jobs)
+  const [crawlerjobs , setJobs] = useState<CrawledOpportunity[]>(jobs)
 
     
     const columns = useMemo(() => [

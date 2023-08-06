@@ -1,4 +1,4 @@
-import { CrawledJob, PrismaClient } from "@prisma/client";
+import { CrawledOpportunity, PrismaClient } from "@prisma/client";
 
 
 const prisma = new PrismaClient();
@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 
 export async function getJobs(){
   try{
-    const result:CrawledJob[] = await prisma.crawledJob.findMany({});
+    const result:CrawledOpportunity[] = await prisma.crawledOpportunity.findMany({});
     return result;  
   }
   catch(err){

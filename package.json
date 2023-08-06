@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "gen": "npx prisma generate",
+    "gen": "npx prisma generate --schema=./ORM/prisma/schema.prisma",
     "build": "npm run gen & next build",
     "start": "next start",
     "lint": "next lint"
