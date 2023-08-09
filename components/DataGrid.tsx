@@ -11,7 +11,7 @@ import NavigationIcon from '@mui/icons-material/Navigation';
 import { Box, Typography, Avatar, Fab } from '@mui/material';
 import { DataGrid, GridRowId, GridRowSpacingParams, gridClasses, GridRenderCellParams } from '@mui/x-data-grid';
 import useSWR from 'swr'
-import {fetcher} from '@/pages/utils'
+import {fetcher} from '@/lib/utils'
 
 const DataTable = ( ) => {
 
