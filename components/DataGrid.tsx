@@ -3,7 +3,6 @@ import UserAction from './UserAction';
 import { toast } from 'react-toastify';
 import EditButtons from './editButtons';
 import { useState, useMemo, useEffect } from 'react';
-import { CrawledOpportunity } from '@prisma/client';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
 import LoadingButton from '@mui/lab/LoadingButton';
