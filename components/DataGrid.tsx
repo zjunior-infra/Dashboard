@@ -70,7 +70,6 @@ const DataTable = ( ) => {
       },
       
 
-      {field: `deadline`, headerName: 'Deadline', width: 140, editable: true  },
       {field: 'type', headerName:'Type', width:140 , editable: true},
       {field: `logo`, headerName: 'Logo', width: 70, editable: true ,
         renderCell: (params:GridRenderCellParams) => <Avatar alt="Remy Sharp" src={params.row.logo} /> },
