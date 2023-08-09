@@ -3,11 +3,11 @@
 import { toast } from 'react-toastify';
 import { useState, useEffect } from 'react';
 import { green } from '@mui/material/colors';
-import { Job } from '@/Database/interface';
 import { Dispatch, SetStateAction } from 'react';
 import { Check , Save} from '@mui/icons-material';
 import { Box, Fab, CircularProgress } from '@mui/material';
-import {GridRowId, GridRenderCellParams} from '@mui/x-data-grid'
+import { GridRenderCellParams} from '@mui/x-data-grid'
+import { CrawledOpportunity } from '@prisma/client';
 
 
 
@@ -21,7 +21,7 @@ interface UserActionProps {
 const UserAction = ({params , rowId, setRowId} : UserActionProps) => {
     const [loading, setLoading] = useState<boolean>(false)
     const [success, setSuccess] = useState<boolean>(false)
-    const [adjustedJobs, setAdjustedJobs] = useState<Job[]>([])
+    const [adjustedJobs, setAdjustedJobs] = useState<CrawledOpportunity[]>([])
 
     const handelUpdate = async ()=>{
         const res = await fetch ('/api/update', {

@@ -10,13 +10,10 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import NavigationIcon from '@mui/icons-material/Navigation';
 import { Box, Typography, Avatar, Fab } from '@mui/material';
 import { DataGrid, GridRowId, GridRowSpacingParams, gridClasses, GridRenderCellParams } from '@mui/x-data-grid';
+import useSWR from 'swr'
+import {fetcher} from '@/pages/utils'
 
-interface DataTableProps {
-  jobs: CrawledOpportunity[];
-}
-
-
-const DataTable = ( {jobs}:DataTableProps ) => {
+const DataTable = ( ) => {
 
   const [rowId, setRowId] = useState('')
   const [loading, setLoading] = useState<boolean>(false)
@@ -26,7 +23,24 @@ const DataTable = ( {jobs}:DataTableProps ) => {
   const [ key, setKey] = useState<number>(0)
   const [editTable , setEditTable] = useState<boolean>(false)
   const [selectedJobs, setSelectedJobs] = useState<GridRowId[]>([])
-  const [crawlerjobs , setJobs] = useState<CrawledOpportunity[]>(jobs)
+  const {data,error, isLoading} = useSWR<CrawledOpportunity[]>('/api/jobs',fetcher)
+  const [crawlerjobs , setJobs] = useState<CrawledOpportunity[]>()
+  
+  const bulk:CrawledOpportunity[] = [{
+    id:'123123',
+    company: 'bulk',
+    title: 'bulk',
+    link: 'bulk',
+    type: 'Internship',
+    description: 'bulk',
+    logo: 'bulk',
+    skills: 'bulk'
+  }]
+  useEffect(()=>{
+    if (!isLoading){
+      setJobs(data)
+    }
+  },[data])
 
     
     const columns = useMemo(() => [
@@ -62,7 +76,7 @@ const DataTable = ( {jobs}:DataTableProps ) => {
         renderCell: (params:GridRenderCellParams) => <Avatar alt="Remy Sharp" src={params.row.logo} /> },
 
       {field: `skills`, headerName: 'Skills' , width: 160, editable: true },
-
+      {field: `description`, headerName: 'Description' , width: 160, editable: true },
       { field: 'actions', headerName: 'Actions', type: 'actions',
         renderCell: (params:GridRenderCellParams) =>
           <UserAction params={params} rowId={rowId} setRowId={setRowId} />
@@ -71,7 +85,7 @@ const DataTable = ( {jobs}:DataTableProps ) => {
 
     ], [rowId])
     // this should be called after the set render, avoiding the limit
-      let rows = crawlerjobs.map((crawlerjobs:CrawledOpportunity)=>{
+      let rows = crawlerjobs?.map((crawlerjobs:CrawledOpportunity)=>{
         const {id,company,title,description,type,link,logo,skills}=crawlerjobs;
         return {
           id,
@@ -209,10 +223,10 @@ const DataTable = ( {jobs}:DataTableProps ) => {
 
           </div>
           
-
+          
           <DataGrid
             columns={columns}
-            rows={rows}
+            rows={rows ?? bulk}
             key={key}
             getRowId={(row) => row.id}
             pageSizeOptions={[13, 50, 100]}  
