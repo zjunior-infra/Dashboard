@@ -7,7 +7,6 @@ import { Dispatch, SetStateAction } from 'react';
 import { Check , Save} from '@mui/icons-material';
 import { Box, Fab, CircularProgress } from '@mui/material';
 import { GridRenderCellParams} from '@mui/x-data-grid'
-import { CrawledOpportunity } from '@prisma/client';
 
 
 
