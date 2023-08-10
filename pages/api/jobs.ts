@@ -1,5 +1,4 @@
 import { prisma } from "@/lib";
-import { CrawledOpportunity, PrismaClient } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 
 
