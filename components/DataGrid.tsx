@@ -71,10 +71,9 @@ const DataTable = ( ) => {
 
       {field: 'type', headerName:'Type', width:140 , editable: true},
       {field: `logo`, headerName: 'Logo', width: 70, editable: true ,
-        renderCell: (params:GridRenderCellParams) => <Avatar alt="Remy Sharp" src={params.row.logo} /> },
-
-      {field: `skills`, headerName: 'Skills' , width: 160, editable: true },
-      {field: `description`, headerName: 'Description' , width: 160, editable: true },
+        renderCell: (params:GridRenderCellParams) => <Avatar alt="Company Logo" src={params.row.logo} /> },
+      // {field: `skills`, headerName: 'Skills' , width: 160, editable: true },
+      // {field: `description`, headerName: 'Description' , width: 160, editable: true },
       { field: 'actions', headerName: 'Actions', type: 'actions',
         renderCell: (params:GridRenderCellParams) =>
           <UserAction params={params} rowId={rowId} setRowId={setRowId} />
