@@ -1,6 +1,4 @@
 import Head from 'next/head';
-import { useRouter } from 'next/router';
-import { CrawledOpportunity } from '@prisma/client';
 import DataTable from '@/components/DataGrid'
 
 
