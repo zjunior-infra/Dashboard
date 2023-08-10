@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { CrawledOpportunity, PrismaClient } from "@prisma/client";
 import { prisma } from "@/lib";
 
 
@@ -15,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
       const updatedJobs = await Promise.all(
         selectedJobs.map(async (job: CrawledOpportunity) => {
-           const { id, company,  title, link,description , type, logo, skills } = job; 
+           const { id, company,  title, link,description,role , level, logo, skills } = job; 
           const updatedJob = await prisma.crawledOpportunity.update({
             where: { id: id },
             data: {
@@ -23,7 +22,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               title : title,
               link : link,
               description: description,
-              type : type,
+              level : level,
+              role:role,
               logo : logo,
               skills : skills
             },

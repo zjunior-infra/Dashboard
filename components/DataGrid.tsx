@@ -30,7 +30,8 @@ const DataTable = ( ) => {
     company: 'bulk',
     title: 'bulk',
     link: 'bulk',
-    type: 'Internship',
+    level: 'Internship',
+    role:'bulk',
     description: 'bulk',
     logo: 'bulk',
     skills: 'bulk'
@@ -45,7 +46,7 @@ const DataTable = ( ) => {
     const columns = useMemo(() => [
       { field: 'id', headerName: 'ID', width: 100, editable: true },
       { field: `company`, headerName: 'Company', width: 140 , editable: true },
-      { field: `title`, headerName: 'Title', width: 160 , editable: true },
+      { field: `title`, headerName: 'Title', width: 280 , editable: true },
      
       { field: `link`, headerName: 'Link', width: 250, editable: true,
         renderCell: (params: GridRenderCellParams) => (
@@ -69,12 +70,12 @@ const DataTable = ( ) => {
       },
       
 
-      {field: 'type', headerName:'Type', width:140 , editable: true},
+      {field: 'level', headerName:'Level', width:140 , editable: true},
+      {field: 'role', headerName:'Role', width:140 , editable: true},
       {field: `logo`, headerName: 'Logo', width: 70, editable: true ,
-        renderCell: (params:GridRenderCellParams) => <Avatar alt="Remy Sharp" src={params.row.logo} /> },
-
-      {field: `skills`, headerName: 'Skills' , width: 160, editable: true },
-      {field: `description`, headerName: 'Description' , width: 160, editable: true },
+        renderCell: (params:GridRenderCellParams) => <Avatar alt="Company Logo" src={params.row.logo} /> },
+      // {field: `skills`, headerName: 'Skills' , width: 160, editable: true },
+      // {field: `description`, headerName: 'Description' , width: 160, editable: true },
       { field: 'actions', headerName: 'Actions', type: 'actions',
         renderCell: (params:GridRenderCellParams) =>
           <UserAction params={params} rowId={rowId} setRowId={setRowId} />
@@ -84,13 +85,14 @@ const DataTable = ( ) => {
     ], [rowId])
     // this should be called after the set render, avoiding the limit
       let rows = crawlerjobs?.map((crawlerjobs:CrawledOpportunity)=>{
-        const {id,company,title,description,type,link,logo,skills}=crawlerjobs;
+        const {id,company,title,description,level,role,link,logo,skills}=crawlerjobs;
         return {
           id,
           company,
           title,
           link,
-          type,
+          level,
+          role,
           description,
           logo,
           skills,

@@ -2,9 +2,10 @@ type CrawledOpportunity = {
   id: string;
   title: string;
   company: string;
-  type: $Enums.opportunityType;
+  level: $Enums.opportunityType;
   logo: string;
   skills: string | null;
   link: string | null;
+  role: string;
   description: string;
 }
