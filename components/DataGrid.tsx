@@ -70,7 +70,8 @@ const DataTable = ( ) => {
       },
       
 
-      {field: 'level', headerName:'Level', width:140 , editable: true},
+      {field: 'level', headerName:'Level', width:140 , editable: true ,type: 'singleSelect',
+      valueOptions: ['Internship', 'Entrylevel']},
       {field: 'role', headerName:'Role', width:140 , editable: true},
       {field: `logo`, headerName: 'Logo', width: 70, editable: true ,
         renderCell: (params:GridRenderCellParams) => <Avatar alt="Company Logo" src={params.row.logo} /> },
