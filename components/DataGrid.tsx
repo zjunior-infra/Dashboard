@@ -44,7 +44,34 @@ const DataTable = ( ) => {
 
     
     const columns = useMemo(() => [
-      { field: 'id', headerName: 'ID', width: 100, editable: true },
+      {
+        field: "id",
+        headerName: "ID",
+        width: 100,
+        editable: false,
+        renderCell: (params: GridRenderCellParams) => {
+          const value = params.value;
+          const copyToClipboard = (text: string) => {
+            navigator.clipboard.writeText(value);
+            toast.success(`Copied!`, {
+              position: toast.POSITION.TOP_RIGHT,
+            });
+          };
+          return (
+            <div>
+              <span
+                className="cursor-pointer"
+                onClick={(e) => {
+                  e.preventDefault();
+                  copyToClipboard(value);
+                }}
+              >
+                {params.row.id}
+              </span>
+            </div>
+          );
+        },
+      },
       { field: `company`, headerName: 'Company', width: 140 , editable: true },
       { field: `title`, headerName: 'Title', width: 280 , editable: true },
      
@@ -85,7 +112,7 @@ const DataTable = ( ) => {
 
     ], [rowId])
     // this should be called after the set render, avoiding the limit
-      let rows = crawlerjobs?.map((crawlerjobs:CrawledOpportunity)=>{
+      let rows = bulk?.map((crawlerjobs:CrawledOpportunity)=>{
         const {id,company,title,description,level,role,link,logo,skills}=crawlerjobs;
         return {
           id,
