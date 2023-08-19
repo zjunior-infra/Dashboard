@@ -53,7 +53,7 @@ const DataTable = ( ) => {
           const value = params.value;
           const copyToClipboard = (text: string) => {
             navigator.clipboard.writeText(value);
-            toast.success(`Copied!`, {
+            toast.success(`Copied`, {
               position: toast.POSITION.TOP_RIGHT,
             });
           };
@@ -112,7 +112,7 @@ const DataTable = ( ) => {
 
     ], [rowId])
     // this should be called after the set render, avoiding the limit
-      let rows = bulk?.map((crawlerjobs:CrawledOpportunity)=>{
+      let rows = crawlerjobs?.map((crawlerjobs:CrawledOpportunity)=>{
         const {id,company,title,description,level,role,link,logo,skills}=crawlerjobs;
         return {
           id,
