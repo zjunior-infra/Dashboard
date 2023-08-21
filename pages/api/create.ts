@@ -12,6 +12,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.log('this is new job', newJob);
 
     try {
+        await prisma.opportunityArchive.create({
+            data: {
+                id: req.body.id
+            }
+        });
+    }
+    catch (error) {
+        res.status(304).json({ message: 'Job has been created before' });
+    }
+
+    try {
         const newJob = await prisma.crawledOpportunity.create({
             data: {
             id : req.body.id,
