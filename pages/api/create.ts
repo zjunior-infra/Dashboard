@@ -18,8 +18,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
         });
     }
-    catch (error) {
-        res.status(304).json({ message: 'Job has been created before' });
+    catch (error: any ) {
+        if(error.code === 'P2002')
+            res.status(304).json({ message: 'Job has been created before' });
+        else
+            res.status(500).json({ message: 'Internal server error' });
     }
 
     try {
