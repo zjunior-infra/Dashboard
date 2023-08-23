@@ -1,4 +1,4 @@
-import { prisma } from "@/lib";
+import { prisma } from "@/src/lib";
 import { NextApiRequest, NextApiResponse } from "next";
 
 
