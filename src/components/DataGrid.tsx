@@ -147,7 +147,7 @@ const DataTable = ( ) => {
             setSelectedJobs([])
           }, 2000)
 
-
+          // better error message, with the codes that will be returned
         }
         else {
           toast.error('Error deleting jobs')
