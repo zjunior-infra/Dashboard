@@ -10,7 +10,7 @@ import NavigationIcon from '@mui/icons-material/Navigation';
 import { Box, Typography, Avatar, Fab } from '@mui/material';
 import { DataGrid, GridRowId, GridRowSpacingParams, gridClasses, GridRenderCellParams } from '@mui/x-data-grid';
 import useSWR from 'swr'
-import {fetcher} from '@/lib/utils'
+import {fetcher} from '@/src/lib/utils'
 
 const DataTable = ( ) => {
 
@@ -147,7 +147,7 @@ const DataTable = ( ) => {
             setSelectedJobs([])
           }, 2000)
 
-
+          // better error message, with the codes that will be returned
         }
         else {
           toast.error('Error deleting jobs')
