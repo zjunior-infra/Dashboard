@@ -1,6 +1,5 @@
 import { prisma } from "@/src/lib";
 import { Curd } from "@/src/lib/crud";
-import { CrawledOpportunity } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 
 type result = Promise<CrawledOpportunity | CrawledOpportunity[] | any >
