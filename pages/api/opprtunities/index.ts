@@ -5,18 +5,56 @@ import { NextApiRequest, NextApiResponse } from "next";
 type result = Promise<CrawledOpportunity | CrawledOpportunity[] | any >
 class OpportunityController extends Curd{
 
-  async Post(data:CrawledOpportunity | CrawledOpportunity[]): Promise<result> {
-
+  async Post(data:CrawledOpportunity[]): Promise<result> {
+    try{
+      await prisma.opportunity.createMany({
+        data:data
+      });
+    }
+    catch(error){
+      console.log(error);
+      throw error;
+    }
   }
-  async Get(id?:string): Promise<result> {
-
+  async Get(): Promise<result> {
+    try{
+      const result = await prisma.opportunity.findMany();
+      return result;
+    }
+    catch(error){
+      console.log(error);
+      throw error;
+    }
   }
-  async Update(id:string,data:CrawledOpportunity): Promise<result> {
-
+  async Update(data: CrawledOpportunity[]): Promise<result> {
+    try{
+      const result = await Promise.all(data.map(async(opp: CrawledOpportunity) => {
+        const updatedOpp = await prisma.opportunity.update({
+          data: opp,
+          where: { id: opp.id }
+        });
+        return updatedOpp;
+      }));    
+      return result;    
+    }
+    catch(error){
+      console.log(error);
+      throw error;
+    }
   }
-  async Delete(id:string): Promise<result> {
+  async Delete(ids:string[]): Promise<result> {
+    try{
+      await prisma.opportunity.deleteMany({ 
+        where:
+         { id: { in:ids } }
+        });
+    }
+    catch(error){
+      console.log(error);
+      throw error;
+    }
   }
-
+  
 }
 
 export default async function handler(req:NextApiRequest, res:NextApiResponse) {
