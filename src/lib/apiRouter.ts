@@ -4,16 +4,16 @@ import { controller } from "./crud";
 export async function Router<T,D,E>(req:NextApiRequest, controller:controller) {
     switch (req.method){
         case 'POST':
-            controller.Post()
+            await controller.Post(req.body as D)
             break;
         case 'GET':
-            controller.Get()
-            break;
+            const result = (await controller.Get(req.body as D)) as T;
+            return result;
         case 'PATCH':
-            controller.Update()
+            await controller.Update(req.body as D)
             break;
         case 'DELETE':
-            controller.Delete()
+            await controller.Delete(req.body as D)
             break;
     }
 }

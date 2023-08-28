@@ -1,4 +1,5 @@
 import { prisma } from "@/src/lib";
+import { Router } from "@/src/lib/apiRouter";
 import { Curd } from "@/src/lib/crud";
 import { NextApiRequest, NextApiResponse } from "next";
 
@@ -60,7 +61,7 @@ class OpportunityController extends Curd{
 export default async function handler(req:NextApiRequest, res:NextApiResponse) {
   const controller = new OpportunityController()
     try{
-      
+      Router<CrawledOpportunity,null,null>(req,controller);
     }
     catch(err){
       return res.status(500).json({message:"there's smth went wrong",Error:err})
