@@ -1,24 +1,14 @@
-  import UserAction from './UserAction';
   import { toast } from 'react-toastify';
-  import EditButtons from './editButtons';
   import { useState, useMemo, useEffect } from 'react';
   import EditIcon from '@mui/icons-material/Edit';
-  import CloseIcon from '@mui/icons-material/Close';
-  import LoadingButton from '@mui/lab/LoadingButton';
   import DeleteIcon from '@mui/icons-material/Delete';
-  import NavigationIcon from '@mui/icons-material/Navigation';
   import { Box, Typography, Avatar, Fab, ButtonGroup } from '@mui/material';
-  import { DataGrid, GridRowId, GridRowSpacingParams, gridClasses, GridRenderCellParams, GridCellEditStopParams, MuiEvent,GridActionsCellItem } from '@mui/x-data-grid';
+  import { DataGrid,GridRowEditStopReasons,GridEventListener, GridRowModel, gridClasses, GridRenderCellParams, GridActionsCellItem } from '@mui/x-data-grid';
   import useSWR from 'swr'
   import {fetcher} from '@/lib/utils'
-  import AddIcon from '@mui/icons-material/Add';
-import { EditRoad } from '@mui/icons-material';
-import TableButtons from './TableButtons';
-
-
-import SaveIcon from '@mui/icons-material/Save';
-import CancelIcon from '@mui/icons-material/Close';
-
+  import TableButtons from './TableButtons';
+  import Swal from 'sweetalert2'
+  import SaveIcon from '@mui/icons-material/Save';
 
   const bulk:CrawledOpportunity[] = [{
     id:'123123',
@@ -66,13 +56,81 @@ import CancelIcon from '@mui/icons-material/Close';
   },
 ]
 
-
-
-
-
   function NewDataTable() {
-    const [crawlerjobs , setCrawlerjobs] = useState<CrawledOpportunity[]>([]);
-    
+    const { data, error, isLoading, mutate } = useSWR('/api/jobs', fetcher)
+    const [crawlerJobs, setCrawlerJobs] = useState([]);
+    const [adjustedJobs, setAdjustedJobs] = useState<CrawledOpportunity[]>([])
+
+  useEffect(()=>{
+      if (!isLoading){
+        setCrawlerJobs(data)
+      }      
+      console.log(adjustedJobs);
+    },[data,adjustedJobs])
+
+    const processRowUpdate = (newRow: GridRowModel) => {
+      const updatedRow = { ...newRow, isNew: false };
+      setAdjustedJobs(jobs => [...jobs, newRow]);
+      return updatedRow;
+    };
+
+  const handleRowEditStop: GridEventListener<'rowEditStop'> = (params, event) => {
+    console.log(params);
+    if (params.reason === GridRowEditStopReasons.rowFocusOut) {
+      event.defaultMuiPrevented = true;
+    }
+  };
+
+    const handelUpdate = async ()=>{
+        const res = await fetch ('/api/update', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({selectedJobs: adjustedJobs}),
+      })
+      if (res.ok){
+        console.log('success')
+        toast.success('Job updated successfully')
+      }
+      else {
+        console.log('fail')
+        toast.error('Job update failed')
+      }
+  };
+
+  const handleSave = async ()=> {
+    console.log('Save Done');
+    setAdjustedJobs([]);
+    await handelUpdate()
+    mutate();
+  };
+
+  const handelDelete = (row: { id: string; }) =>     {
+    console.log(row.id);
+    Swal.fire({
+        title: `Are you sure you want to delete ${row.id} opportunity?`,
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!'
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try{
+            const res = await fetch ('/api/delete', {
+              method: 'DELETE',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({selectedJobs: row}),
+            })
+            toast.success('Job Deleted Successfully')
+
+          }catch(err){
+            toast.error('Job Deleted Failed')
+          }
+        }
+      })
+    };
+
     const columns = useMemo(()=>[
         {
           field: "id",
@@ -138,9 +196,10 @@ import CancelIcon from '@mui/icons-material/Close';
           headerName: 'Actions',
           width: 100,
           cellClassName: 'actions',
-          getActions: () => {
-            // const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
-    
+          getActions:(params: {
+            row: { id: string }; 
+}) => {
+
             if (true) { /* isInEditMode */
               return [
                 <GridActionsCellItem
@@ -149,14 +208,14 @@ import CancelIcon from '@mui/icons-material/Close';
                   sx={{
                     color: 'primary.main',
                   }}
-              className='bg-sky-900 hover:bg-sky-500'
-                />
+                  onClick={()=> handleSave()}
+                />  
               ,
             <GridActionsCellItem
               icon={<DeleteIcon />}
               label="Delete"
               color="inherit"
-              className='bg-red-700 hover:bg-red-500'
+              onClick={()=> handelDelete(params.row)}
             />,
             ]
             }
@@ -178,25 +237,6 @@ import CancelIcon from '@mui/icons-material/Close';
         },
 ],[])
 
-const { data:crawlerJobs, error, isLoading } = useSWR('/api/jobs', fetcher)
-
-
-let rows = crawlerJobs|| bulk?.map((crawlerjobs:CrawledOpportunity)=>{
-          const {id,company,title,description,level,role,link,logo,skills}=crawlerjobs;
-          return {
-            id,
-            company,
-            title,
-            link,
-            level,
-            role,
-            description,
-            logo,
-            skills,
-          }
-        }
-)
-
     return (
       <div className='flex flex-col'> 
       <Typography variant="h3" component="h3"  color={'white'}
@@ -206,10 +246,12 @@ let rows = crawlerJobs|| bulk?.map((crawlerjobs:CrawledOpportunity)=>{
 
       <TableButtons/>
 
-      <DataGrid columns={columns} rows={rows ?? bulk} sx={{
+      <DataGrid columns={columns} rows={crawlerJobs} sx={{
         [`& .${gridClasses.row}`]: {bgcolor: (theme) => theme.palette.mode === 'light' ? `grey[200]` : `grey.900`, height: 80,},pl: 0.7,}}
         pageSizeOptions={[5, 10]}
-
+        editMode='row'
+        onRowEditStop={handleRowEditStop}
+        processRowUpdate={processRowUpdate}
     />
         </Box>
     </div>
@@ -219,15 +261,9 @@ let rows = crawlerJobs|| bulk?.map((crawlerjobs:CrawledOpportunity)=>{
   export default NewDataTable
 
 ///////////////////////////////////////////////////////
-
-
-
-
-
-
     {/* <LoadingButton variant="outlined" className='p-2 mb-1'>
                 <span className=' text-base font-roboto font-medium'>charge JuniorJobs</span>
             </LoadingButton> */}
             {/* <Fab  variant="extended" color="primary">
               <AddIcon />
-            </Fab> */}
+            </Fab> */}     

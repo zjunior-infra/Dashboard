@@ -1,5 +1,4 @@
 import Head from 'next/head';
-import DataTable from '@/components/DataGrid'
 import NewDataTable from '@/components/NewDataTable';
 
 
