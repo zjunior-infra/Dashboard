@@ -1,14 +1,15 @@
   import { toast } from 'react-toastify';
   import { useState, useMemo, useEffect } from 'react';
-  import EditIcon from '@mui/icons-material/Edit';
-  import DeleteIcon from '@mui/icons-material/Delete';
   import { Box, Typography, Avatar, Fab, ButtonGroup } from '@mui/material';
   import { DataGrid,GridRowEditStopReasons,GridEventListener, GridRowModel, gridClasses, GridRenderCellParams, GridActionsCellItem } from '@mui/x-data-grid';
   import useSWR from 'swr'
   import {fetcher} from '@/lib/utils'
   import TableButtons from './TableButtons';
   import Swal from 'sweetalert2'
+  import DeleteIcon from '@mui/icons-material/Delete';
   import SaveIcon from '@mui/icons-material/Save';
+  import EditIcon from '@mui/icons-material/Edit';
+  import CloseIcon from '@mui/icons-material/Close';
 
   const bulk:CrawledOpportunity[] = [{
     id:'123123',
@@ -58,34 +59,51 @@
 
   function NewDataTable() {
     const { data, error, isLoading, mutate } = useSWR('/api/jobs', fetcher)
-    const [crawlerJobs, setCrawlerJobs] = useState([]);
-    const [adjustedJobs, setAdjustedJobs] = useState<CrawledOpportunity[]>([])
+    const [crawlerJobs, setCrawlerJobs] = useState<CrawledOpportunity[]>([]);
+    const [adjustedJobs, setAdjustedJobs] = useState<(CrawledOpportunity)[]>([]);
+    const [editMode, setEditMode] = useState<boolean>(false)
+    const [editModeRowId, setEditModeRowId] = useState<string[]>([]);
+
+    const [readyToDeploayjobs, setReadyToDeploayJobs] =useState<any[]>([])
 
   useEffect(()=>{
       if (!isLoading){
         setCrawlerJobs(data)
       }      
-      console.log(adjustedJobs);
+      // console.log(adjustedJobs);
+      console.log(readyToDeploayjobs);
+
     },[data,adjustedJobs])
 
-    const processRowUpdate = (newRow: GridRowModel) => {
-      const updatedRow = { ...newRow, isNew: false };
-      setAdjustedJobs(jobs => [...jobs, newRow]);
+  const processRowUpdate = (newRow: CrawledOpportunity) => {
+      console.log(newRow);
+      const updatedRow = {...newRow};
+      setAdjustedJobs((jobs) => jobs.filter((j) =>j.id.toString() !== newRow.id.toString()));
+      setAdjustedJobs((jobs) => [...jobs, updatedRow]);
+    
       return updatedRow;
-    };
+  };
 
-  const handleRowEditStop: GridEventListener<'rowEditStop'> = (params, event) => {
-    console.log(params);
-    if (params.reason === GridRowEditStopReasons.rowFocusOut) {
-      event.defaultMuiPrevented = true;
-    }
+  const activeRow = (id:string)=>{
+      setEditModeRowId(ids =>{
+        if (ids.includes(id)){
+          return [...ids]
+        }else{
+          return [...ids, id]
+        }
+      });
+  };
+
+  const handleRowEditStop: GridEventListener<'rowEditStop'> = (params) => {    
+    activeRow(params.row.id.toString())
+    setEditMode(true)
   };
 
     const handelUpdate = async ()=>{
         const res = await fetch ('/api/update', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({selectedJobs: adjustedJobs}),
+          body: JSON.stringify({selectedJobs: readyToDeploayjobs}),
       })
       if (res.ok){
         console.log('success')
@@ -97,12 +115,25 @@
       }
   };
 
-  const handleSave = async ()=> {
+  const handleClose = (id:string)=> {
+    setEditModeRowId((ids) => ids.filter((i) => i !== id))
+  }
+
+  const handleSave = async (id:string)=> {
     console.log('Save Done');
-    setAdjustedJobs([]);
-    await handelUpdate()
+    setEditMode(false);
+    setEditModeRowId((ids) => ids.filter((i) => i !== id));
+    setAdjustedJobs(jobs=> jobs.filter(j => j.id.toString() !== id));
+    
+    setReadyToDeploayJobs(jobs =>[...jobs, adjustedJobs.find(j => j.id === id)]);
+
     mutate();
   };
+
+  const handelConfirm =async ()=>{
+    await handelUpdate()
+    setReadyToDeploayJobs([])
+  }
 
   const handelDelete = (row: { id: string; }) =>     {
     console.log(row.id);
@@ -120,10 +151,8 @@
             const res = await fetch ('/api/delete', {
               method: 'DELETE',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({selectedJobs: row}),
             })
             toast.success('Job Deleted Successfully')
-
           }catch(err){
             toast.error('Job Deleted Failed')
           }
@@ -131,7 +160,7 @@
       })
     };
 
-    const columns = useMemo(()=>[
+    const columns =[
         {
           field: "id",
           headerName: "ID",
@@ -182,7 +211,7 @@
             </a>
           ),
         },
-        
+
         {field: 'level', headerName:'Level', width:140 , editable: true ,type: 'singleSelect',
         valueOptions: ['Internship', 'Entrylevel']},
         {field: 'role', headerName:'Role', width:140 , editable: true},
@@ -196,11 +225,8 @@
           headerName: 'Actions',
           width: 100,
           cellClassName: 'actions',
-          getActions:(params: {
-            row: { id: string }; 
-}) => {
-
-            if (true) { /* isInEditMode */
+          getActions:(params: {row: { id: string }}) => {
+            if (editModeRowId.includes(params.row.id)) {
               return [
                 <GridActionsCellItem
                   icon={<SaveIcon/>}
@@ -208,34 +234,37 @@
                   sx={{
                     color: 'primary.main',
                   }}
-                  onClick={()=> handleSave()}
+                  onClick={()=> handleSave(params.row.id)}
                 />  
               ,
             <GridActionsCellItem
-              icon={<DeleteIcon />}
+              icon={<CloseIcon />}
               label="Delete"
               color="inherit"
-              onClick={()=> handelDelete(params.row)}
+              onClick={()=> handleClose(params.row.id.toString())}
             />,
             ]
-            }
-    
-            return [
-              <GridActionsCellItem
+          }
+            else{
+              return [
+                <GridActionsCellItem
                 icon={<EditIcon />}
                 label="Edit"
                 className="textPrimary"
                 color="inherit"
-              />,
-              <GridActionsCellItem
+                onClick={()=> activeRow(params.row.id.toString())}
+                />,
+                <GridActionsCellItem
                 icon={<DeleteIcon />}
                 label="Delete"
                 color="inherit"
-              />,
-            ];
+                onClick={()=> handelDelete(params.row)}
+                />,
+              ];
+            }
           },
         },
-],[])
+]
 
     return (
       <div className='flex flex-col'> 
@@ -244,10 +273,12 @@
 
       <Box sx={{ height: 550, width: '100%' }} className="z-0" >
 
-      <TableButtons/>
+      <TableButtons handelConfirm={handelConfirm}/>
 
-      <DataGrid columns={columns} rows={crawlerJobs} sx={{
-        [`& .${gridClasses.row}`]: {bgcolor: (theme) => theme.palette.mode === 'light' ? `grey[200]` : `grey.900`, height: 80,},pl: 0.7,}}
+      <DataGrid
+        columns={columns ?? bulk} 
+        rows={crawlerJobs}
+        sx={{[`& .${gridClasses.row}`]: {bgcolor: (theme) => theme.palette.mode === 'light' ? `grey[200]` : `grey.900`, height: 80,},pl: 0.7,}}
         pageSizeOptions={[5, 10]}
         editMode='row'
         onRowEditStop={handleRowEditStop}

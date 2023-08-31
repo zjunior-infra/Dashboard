@@ -1,4 +1,4 @@
-import { Fab } from '@mui/material'
+import { Box, Button, Fab } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit';
 
 import CloseIcon from '@mui/icons-material/Close';
@@ -7,38 +7,29 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import NavigationIcon from '@mui/icons-material/Navigation';
 
-import React, { useState } from 'react'
+import { useState } from 'react'
+interface EditButtonsProps {
+  handelConfirm: () => void;
 
-function TableButtons(){
+}
+
+function TableButtons({handelConfirm}: EditButtonsProps){
   const [editable,setEditable] = useState<boolean>(false)
 
   return (
-    <div className="icon w-full flex items-end justify-end gap-x-4 mb-2 mr-5">
-    {editable &&(
-        <>
-        <Fab color="secondary" aria-label="edit" className='bg-rose-300 hover:bg-red-500' onClick={() => setEditable(prev => !prev)}>
-        <CloseIcon/>
-      </Fab>
+    <div className="icon w-full flex items-center justify-end gap-x-4 mb-2 mr-5">
 
-      <Fab className='bg-gray-200 hover:bg-gray-400' onClick={() => setEditable(prev => !prev)}>
-      <DeleteIcon/>
-      </Fab>
-        </>
-          )
-      }
-        {!editable &&(
-          <Fab aria-label="edit" className='bg-gray-200 hover:bg-gray-400'  onClick={() => setEditable(prev => !prev)}>
-          <EditIcon/>
-          </Fab>
-          )}
-         
-        {editable &&(
-            <Fab variant="extended" color="primary" aria-label="add" className=' bg-gray-200'  onClick={() => setEditable(prev => !prev)} >
-              <NavigationIcon sx={{ mr: 1 }}  />
-              Confirm jobs
-            </Fab>  
-        )
-        }
+
+<Fab variant="extended" color="primary" aria-label="add" className=' bg-gray-200' onClick={handelConfirm}>
+                  <NavigationIcon sx={{ mr: 1 }} 
+                  />
+                  Confirm jobs
+                </Fab>  
+       
+        <Box className="border border-sky-300 rounded-lg">
+        <Button className='text-base font-roboto font-medium' >charge Zjunior Jobs</Button>
+        </Box>
+        
       </div>
   )
 }
