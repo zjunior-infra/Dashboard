@@ -1,7 +1,7 @@
-export abstract class Curd{
-    abstract Post(...args:any):unknown
-    abstract Get(...args:any):unknown
-    abstract Update(...args:any):unknown
-    abstract Delete(...args:any):unknown
+export abstract class Curd<T>{
+    abstract Post(...args:any): Promise<T>;
+    abstract Get(...args:any): Promise<T>;
+    abstract Update(...args:any): Promise<T>;
+    abstract Delete(...args:any): Promise<T>;
 }
 export type controller = InstanceType<typeof Curd>
