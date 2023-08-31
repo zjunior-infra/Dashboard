@@ -1,7 +1,7 @@
   import { toast } from 'react-toastify';
   import { useState, useMemo, useEffect } from 'react';
-  import { Box, Typography, Avatar, Fab, ButtonGroup } from '@mui/material';
-  import { DataGrid,GridRowEditStopReasons,GridEventListener, GridRowModel, gridClasses, GridRenderCellParams, GridActionsCellItem } from '@mui/x-data-grid';
+  import { Box, Typography, Avatar } from '@mui/material';
+  import { DataGrid,GridEventListener, gridClasses, GridRenderCellParams, GridActionsCellItem } from '@mui/x-data-grid';
   import useSWR from 'swr'
   import {fetcher} from '@/lib/utils'
   import TableButtons from './TableButtons';
@@ -133,11 +133,13 @@
   const handelCharge =async ()=>{
     await handelUpdate()
     setReadyToDeploayJobs([])
+    setEditModeRowId([])
   }
 
   const handelDelete = (row: { id: string; }) =>     {
-    console.log(row.id);
-    Swal.fire({
+  console.log(row);
+  
+  Swal.fire({
         title: `Are you sure you want to delete ${row.id} opportunity?`,
         text: "You won't be able to revert this!",
         icon: 'warning',
@@ -151,6 +153,7 @@
             const res = await fetch ('/api/delete', {
               method: 'DELETE',
               headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({selectedJobs: row.id}),
             })
             toast.success('Job Deleted Successfully')
           }catch(err){
@@ -160,7 +163,8 @@
       })
     };
 
-    const columns =[
+    const columns = useMemo(()=>
+    [
         {
           field: "id",
           headerName: "ID",
@@ -264,7 +268,7 @@
             }
           },
         },
-]
+],[adjustedJobs, editModeRowId])
 
     return (
       <div className='flex flex-col'> 

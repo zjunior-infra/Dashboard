@@ -20,11 +20,11 @@ function TableButtons({handelCharge}: EditButtonsProps){
     <div className="icon w-full flex items-center justify-end gap-x-4 mb-2 mr-5">
 
 
-<Fab variant="extended" color="primary" aria-label="add" className=' bg-gray-200'>
+{/* <Fab variant="extended" color="primary" aria-label="add" className=' bg-gray-200'>
                   <NavigationIcon sx={{ mr: 1 }} 
                   />
                   Confirm jobs
-                </Fab>  
+                </Fab>   */}
        
         <Box className="border border-sky-300 rounded-lg" onClick={handelCharge}>
         <Button className='text-base font-roboto font-medium' >charge Zjunior Jobs</Button>
