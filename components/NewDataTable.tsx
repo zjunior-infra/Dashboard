@@ -130,7 +130,7 @@
     mutate();
   };
 
-  const handelConfirm =async ()=>{
+  const handelCharge =async ()=>{
     await handelUpdate()
     setReadyToDeploayJobs([])
   }
@@ -273,7 +273,7 @@
 
       <Box sx={{ height: 550, width: '100%' }} className="z-0" >
 
-      <TableButtons handelConfirm={handelConfirm}/>
+      <TableButtons handelCharge={handelCharge}/>
 
       <DataGrid
         columns={columns ?? bulk} 
