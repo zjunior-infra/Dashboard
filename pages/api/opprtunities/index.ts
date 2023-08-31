@@ -6,7 +6,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 type result = Promise<CrawledOpportunity | CrawledOpportunity[] | any >
 class OpportunityController extends Curd{
 
-  async Post(data:CrawledOpportunity[]): Promise<result> {
+  async Post(data:CrawledOpportunity[] | CrawledOpportunity): Promise<result> {
     try{
       await prisma.opportunity.createMany({
         data:data
