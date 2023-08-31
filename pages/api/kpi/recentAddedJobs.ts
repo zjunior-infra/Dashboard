@@ -3,23 +3,15 @@ import { prisma } from "@/src/lib";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse){
     try{
+        if(req.method !== 'GET')
+            return res.status(405).json({ message: 'Method not allowed' });
+
         let {date, span} : any = req.query;
-        if(date === undefined && span !== undefined)
-            return res.status(400).json({message:"You can't send span without date!"});
+        const dayToMilliseconds = 24 * 60 * 60 * 1000;
 
-        if (span === undefined)
-            span = 7;
-
-        if(date === undefined)
-            date = new Date().setDate(new Date().getDate() - 7);
-        else // Converting the date to the form of YYYY-MM-DD
-            date = date.split('-').reverse().join('-');
-        
-        // Count interval [firstDate, secondDate]
-        let firstDate = new Date(date), secondDate = new Date(firstDate);
-        secondDate.setDate(secondDate.getDate() + Number(span));
-        if(secondDate > new Date())
-            secondDate = new Date();
+        span ||= 7;
+        const firstDate = date ? new Date(date.split('-').reverse().join('-')) : new Date(Date.now() - span * dayToMilliseconds);
+        const secondDate = new Date(firstDate.valueOf() + span * dayToMilliseconds);
 
         const numOfJobs = await prisma.opportunity.count({
             where:{
@@ -33,6 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         res.json({number:numOfJobs});
     }
     catch(error){
+        console.error(error);
         res.status(500).json({message:"there's smth went wrong"});
     }
 }
