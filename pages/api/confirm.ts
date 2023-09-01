@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { prisma } from "@/src/lib";
+import { prisma } from "@/pages/src/lib";
 
 
 
