@@ -1,5 +1,5 @@
-import { prisma } from "@/pages/src/lib";
-import { Curd } from "@/pages/src/lib/crud";
+import { prisma } from "@/lib";
+import { Curd } from "@/lib/crud";
 import { NextApiRequest, NextApiResponse } from "next";
 
 type result = Promise<CrawledOpportunity | CrawledOpportunity[] | any >

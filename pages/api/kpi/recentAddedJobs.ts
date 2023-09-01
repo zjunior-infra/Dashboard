@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { prisma } from "@/pages/src/lib";
+import { prisma } from "@/lib";
 
 interface query {
     date:string,
