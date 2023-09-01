@@ -1,12 +1,18 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "@/src/lib";
 
+interface query {
+    date:string,
+    span:number,
+    [key:string]:string | number
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse){
     try{
         if(req.method !== 'GET')
             return res.status(405).json({ message: 'Method not allowed' });
 
-        let {date, span} : any = req.query;
+        let {date, span} = req.query as query
         const dayToMilliseconds = 24 * 60 * 60 * 1000;
 
         span ||= 7;
