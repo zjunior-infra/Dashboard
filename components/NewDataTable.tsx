@@ -174,7 +174,7 @@
             const value = params.value;
             const copyToClipboard = (text: string) => {
               navigator.clipboard.writeText(value);
-              toast.success(`Copied`, {
+              toast.success(`Copied ${value}`, {
                 position: toast.POSITION.TOP_RIGHT,
               });
             };
@@ -218,8 +218,8 @@
 
         {field: 'level', headerName:'Level', width:140 , editable: true ,type: 'singleSelect',
         valueOptions: ['Internship', 'Entrylevel']},
-        {field: 'role', headerName:'Role', width:140 , editable: true},
-        {field: `logo`, headerName: 'Logo', width: 70, editable: true ,
+        {field: 'role', headerName:'Role', width:180 , editable: true},
+        {field: `logo`, headerName: 'Logo', width: 70,
           renderCell: (params:GridRenderCellParams) => <Avatar alt="Company Logo" src={params.row.logo} /> },
         // {field: `skills`, headerName: 'Skills' , width: 160, editable: true },
         // {field: `description`, headerName: 'Description' , width: 160, editable: true },
@@ -271,34 +271,33 @@
 ],[adjustedJobs, editModeRowId])
 
     return (
-      <div className='flex flex-col'> 
+      <>
       <Typography variant="h3" component="h3"  color={'white'}
-      sx={{textAlign:'center', mt:3, mb:3}}>Manage Jobs</Typography>
+      sx={{textAlign:'center'}}>Manage Jobs</Typography>
 
       <Box sx={{ height: 550, width: '100%' }} className="z-0" >
 
       <TableButtons handelCharge={handelCharge}/>
 
       <DataGrid
+        initialState={{
+          pagination:{paginationModel:{pageSize:30}}
+        }}
+        
         columns={columns ?? bulk} 
         rows={crawlerJobs}
         sx={{[`& .${gridClasses.row}`]: {bgcolor: (theme) => theme.palette.mode === 'light' ? `grey[200]` : `grey.900`, height: 80,},pl: 0.7,}}
-        pageSizeOptions={[5, 10]}
+        pageSizeOptions={[30,50,100]}
         editMode='row'
+        checkboxSelection 
+        disableRowSelectionOnClick
         onRowEditStop={handleRowEditStop}
         processRowUpdate={processRowUpdate}
     />
         </Box>
-    </div>
+        </>
     )
   }
 
   export default NewDataTable
 
-///////////////////////////////////////////////////////
-    {/* <LoadingButton variant="outlined" className='p-2 mb-1'>
-                <span className=' text-base font-roboto font-medium'>charge JuniorJobs</span>
-            </LoadingButton> */}
-            {/* <Fab  variant="extended" color="primary">
-              <AddIcon />
-            </Fab> */}     
