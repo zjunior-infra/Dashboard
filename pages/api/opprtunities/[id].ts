@@ -26,6 +26,8 @@ class SingleOpportunityController extends Curd<CrawledOpportunity | void>{
         }
         catch(error){
             console.error(error);
+            if (error.code === 'P2025')
+                error.statusCode = 404;
             throw error;
         }
     }

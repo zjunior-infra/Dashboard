@@ -29,8 +29,6 @@ export async function Router<T, D>(req: NextApiRequest, controller: controller):
         }
     }
     catch (err: unknown) {
-        if (err.code === 'P2025')
-            err.statusCode = 404;
         return {
             message: err.message || 'an error occured',
             statusCode: err.statusCode || 500
