@@ -4,7 +4,9 @@ import { Curd } from "@/lib/crud";
 import { NextApiRequest, NextApiResponse } from "next";
 
 class SingleOpportunityController extends Curd<CrawledOpportunity | void>{
-    async Post(data: CrawledOpportunity):Promise<void> {}
+    async Post(data: CrawledOpportunity):Promise<void> {
+        throw { message: 'This HTTP method is not allowed', statusCode: 400};
+    }
 
     async Delete(data: CrawledOpportunity): Promise<CrawledOpportunity> {
         try{
