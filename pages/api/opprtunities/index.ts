@@ -64,7 +64,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       req,
       controller
     );
-    if (result && "message" in result && "statusCode" in result)
+    if (result?.message)
       res.status(result.statusCode).json({message:result.message});
     else
       res.status(result ? 200 : 204).json(result);
