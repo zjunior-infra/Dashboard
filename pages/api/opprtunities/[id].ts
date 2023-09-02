@@ -1,21 +1,59 @@
 import { prisma } from "@/lib";
+import { ApiResponseError, Router } from "@/lib/apiRouter";
+import { Curd } from "@/lib/crud";
 import { NextApiRequest, NextApiResponse } from "next";
 
+class SingleOpportunityController extends Curd<CrawledOpportunity | void>{
+    async Post(data: CrawledOpportunity):Promise<void> {}
+
+    async Delete(data: CrawledOpportunity): Promise<CrawledOpportunity> {
+        try{
+            const deletedJob: CrawledOpportunity = await prisma.opportunity.delete({ where: { id: data.id } });
+            return deletedJob;
+        }
+        catch(error){
+            console.error(error);
+            throw error;
+        }
+    }
+
+    async Get(id: string): Promise<CrawledOpportunity> {
+        try {
+            const job: CrawledOpportunity = await prisma.opportunity.findFirstOrThrow({ where: { id: id } });
+            return job;
+        }
+        catch(error){
+            console.error(error);
+            throw error;
+        }
+    }
+
+    async Update(data: CrawledOpportunity): Promise<CrawledOpportunity> {
+        try{
+            const updatedJob: CrawledOpportunity = await prisma.opportunity.update({
+                data: data,
+                where: { id: data.id }
+            });
+            return updatedJob;
+        }
+        catch(error){
+            console.error(error);
+            throw error;
+        }
+    }
+}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const id = String(req.query.id);
-    try {
-        const job: CrawledOpportunity = await prisma.opportunity.findUniqueOrThrow({
-            where: {
-                id: id
-            }
-        });
-        res.status(200).json(job)
-    }
-    catch (err: unknown) {
-        if (err.code === 'P2025')
-            return res.status(404).json({ message: "There is no job with the provided id" });
+    const controller = new SingleOpportunityController();
+    try{
+        const result = await Router<CrawledOpportunity, ApiResponseError>(req, controller);
+        if (result?.message)
+            res.status(result.statusCode).json({ message: result.message });
         else
-            return res.status(500).json({ message: "there's smth went wrong", Error: err })
+            res.status(result ? 200 : 204).json(result);
+    }
+    catch(error: unknown){
+        console.error(error);
+        res.status(500).json({ message: "there's smth went wrong", Error: error })
     }
 }
