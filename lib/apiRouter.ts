@@ -13,7 +13,7 @@ export async function Router<T, D>(req: NextApiRequest, controller: controller):
                 await controller.Post(req.body as T)
                 break;
             case 'GET':
-                const result = await controller.Get(req.query.id as string);
+                const result = await controller.Get(req.body as T);
                 return result as T;
             case 'PATCH':
                 await controller.Update(req.body as T)

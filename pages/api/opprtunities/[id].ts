@@ -17,9 +17,9 @@ class SingleOpportunityController extends Curd<CrawledOpportunity | void>{
         }
     }
 
-    async Get(id: string): Promise<CrawledOpportunity> {
+    async Get(data: CrawledOpportunity): Promise<CrawledOpportunity> {
         try {
-            const job: CrawledOpportunity = await prisma.opportunity.findFirstOrThrow({ where: { id: id } });
+            const job: CrawledOpportunity = await prisma.opportunity.findFirstOrThrow({ where: { id: data.id } });
             return job;
         }
         catch(error){
@@ -45,6 +45,7 @@ class SingleOpportunityController extends Curd<CrawledOpportunity | void>{
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const controller = new SingleOpportunityController();
+    req.body ||= { id: req.query.id };
     try{
         const result = await Router<CrawledOpportunity, ApiResponseError>(req, controller);
         if (result?.message)
