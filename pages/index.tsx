@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import NewDataTable from '@/components/NewDataTable';
+import DataTable from '@/components/DataTable';
 
 
 
@@ -13,10 +13,9 @@ export default function Home() {
 
     
     <main className="flex min-h-screen w-full flex-col items-center justify-between p-24">
-      
-
-      {/* <DataTable /> */}
-      <NewDataTable/>
+        
+            <DataTable/>
+    
     </main>
     </>
   )
