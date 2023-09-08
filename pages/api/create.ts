@@ -19,7 +19,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             company: req.body.company,
             description: req.body.description,
             link: req.body.link,
-            level: req.body.type,
+            level: req.body.level,
             role: req.body.role,
             logo: req.body.logo,
             skills: req.body.skills,

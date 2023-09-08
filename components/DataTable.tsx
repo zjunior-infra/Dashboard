@@ -1,76 +1,30 @@
 import { toast } from 'react-toastify';
 import { useState, useMemo, useEffect } from 'react';
-import { Box, Typography, Avatar, selectClasses } from '@mui/material';
-import { DataGrid,GridEventListener, gridClasses, GridRowModel, GridRenderCellParams, GridActionsCellItem, GridRowId } from '@mui/x-data-grid';
-import useSWR,{mutate} from 'swr'
+import { Box, Typography, Avatar } from '@mui/material';
+import { DataGrid,GridEventListener, gridClasses, GridRenderCellParams, GridActionsCellItem, GridRowId } from '@mui/x-data-grid';
+import useSWR from 'swr'
 import {fetcher} from '@/lib/utils'
 import TableButtons from './TableButtons';
 import Swal from 'sweetalert2'
 import DeleteIcon from '@mui/icons-material/Delete';
 import SaveIcon from '@mui/icons-material/Save';
 
-
-const bulk:CrawledOpportunity[] = [{
-  id:'123123',
-  company: 'bulk',
-  title: 'bulk',
-  link: 'bulk',
-  level: 'Internship',
-  role:'bulk',
-  description: 'bulk',
-  logo: 'bulk',
-  skills: 'bulk'
-},
-{
-  id:'987654',
-  company: 'bulk 2',
-  title: 'bulk 2',
-  link: 'bulk 2',
-  level: 'Internship',
-  role:'bulk 2',
-  description: 'bulk 2',
-  logo: 'bulk 2',
-  skills: 'bulk 2'
-},
-{
-  id:'456789',
-  company: 'bulk 3',
-  title: 'bulk 3',
-  link: 'bulk 3',
-  level: 'Internship',
-  role:'bulk 3',
-  description: 'bulk 3',
-  logo: 'bulk 3',
-  skills: 'bulk 3'
-},
-{
-  id:'246802',
-  company: 'bulk 4',
-  title: 'bulk 4',
-  link: 'bulk 4',
-  level: 'Internship',
-  role:'bulk 4',
-  description: 'bulk 4',
-  logo: 'bulk 4',
-  skills: 'bulk 4'
-},
-]
+import NavigationIcon from '@mui/icons-material/Navigation';
 
 function NewDataTable() {
 
-  const { data, error, isLoading} = useSWR('/api/jobs', fetcher,{
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false,
-  })
+  const { data, error, isLoading} = useSWR('/api/jobs', fetcher,{revalidateOnFocus: false, revalidateOnReconnect: false,})
 
   const [crawlerJobs, setCrawlerJobs] = useState<CrawledOpportunity[]>([]);
   const [editModeRowId, setEditModeRowId] = useState<string[]>([]);
+  const [confirmRowId, setConfirmRowId] = useState<string[]>([]);
   const [selectedRows, setSelectedRows]= useState<GridRowId[]>([]);
 
 useEffect(()=>{
     if (!isLoading){
       setCrawlerJobs(data)
     }      
+   
   },[data])
 
 const processRowUpdate = (newRow: CrawledOpportunity) => {
@@ -88,39 +42,67 @@ const activeRow = (id:string)=>{
         return [...ids, id]
       }
     });
+    setConfirmRowId(ids =>{
+      if (ids.includes(id)){
+        return [...ids]
+      }else{
+        return [...ids, id]
+      }
+    });
 };
 
 const handleRowEditStop: GridEventListener<'rowEditStop'> = (params) => {    
   activeRow(params.row.id.toString())
+  // setRowModesModel({
+  //   [params.row.id]: {mode:GridRowModes.View}
+  // })
 };
 
 const handelUpdate = async (jobs: any)=>{
-      const res = await fetch ('/api/update', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({selectedJobs: [jobs]}),
-    })
-    if (res.ok){
-      console.log('success')
-      toast.success('Job updated successfully')
-    }
-    else {
-      console.log('fail')
-      toast.error('Job update failed')
-    }
+  const res = await fetch ('/api/update', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({selectedJobs: [jobs]}),
+})
+if (res.ok){
+  console.log('success')
+  toast.success('Job updated successfully')
+}
+else {
+  console.log('fail')
+  toast.error('Job update failed')
+}
 };
 
-const handleSave = async (row: { id: string; })=> {
-  console.log('Save Done');
-  setEditModeRowId((ids) => ids.filter((i) => i !== row.id));
-  handelUpdate(row)
-  // setAdjustedJobs(jobs=> jobs.filter(j => j.id.toString() !== id));
-  
-  // setReadyToDeploayJobs(jobs =>[...jobs, adjustedJobs.find(j => j.id === id)]);
+const handleCreate = async (jobs: any)=>{
+  const newJob = jobs
+  const res = await fetch ('/api/create', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(newJob)
+})
+if (res.ok){
+  console.log('success')
+  toast.success('Job Created successfully')
+}
+else {
+  console.log('fail')
+  toast.error('Job creation failed')
+}
+}
+
+const handleSave = async (row: { id: string; new?: boolean; })=> {
+  if(row.new){
+    delete row.new;
+    handleCreate(row);  
+  }
+  else{
+    handelUpdate(row)
+  }
+  setEditModeRowId((ids) => ids.filter((i) => i !== row.id))
 };
 
-const handelDelete = (row: { id: string; }) =>     {
-  console.log(row.id);
+const handelDelete = (row: { id: string; }) => {
 
 Swal.fire({
       title: `Are you sure you want to delete ${row.id} opportunity?`,
@@ -146,7 +128,24 @@ Swal.fire({
         }
       }
     })
-  };
+};
+
+const handleConfirm = async (row: {id:string})=>{
+  console.log("Confirm");
+  try{
+   await fetch ('/api/confirm', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({selectedJobs: [row]}),
+    })
+    setConfirmRowId((ids) => ids.filter((i) => i !== row.id))
+    toast.success("Job Confirmed Successfully")
+  }catch(err){
+    toast.error("Job Confirmation failed")
+    console.log(err);
+  } 
+
+}
 
   const columns = useMemo(()=>
   [
@@ -203,7 +202,7 @@ Swal.fire({
 
       {field: 'level', headerName:'Level', width:140 , editable: true ,type: 'singleSelect',
       valueOptions: ['Internship', 'Entrylevel']},
-      {field: 'role', headerName:'Role', width:180 , editable: true},
+      {field: 'role', headerName:'Role', width:160 , editable: true},
       {field: `logo`, headerName: 'Logo', width: 70,
         renderCell: (params:GridRenderCellParams) => <Avatar alt="Company Logo" src={params.row.logo} /> },
       // {field: `skills`, headerName: 'Skills' , width: 160, editable: true },
@@ -212,7 +211,7 @@ Swal.fire({
         field: 'actions',
         type: 'actions',
         headerName: 'Actions',
-        width: 100,
+        width: 120,
         cellClassName: 'actions',
         getActions:(params: {row: { id: string }}) => {
             return [
@@ -232,11 +231,18 @@ Swal.fire({
             color="inherit"
             onClick={()=>handelDelete(params.row)}
           />,
+          <GridActionsCellItem
+            icon={<NavigationIcon/>}
+            label="confirm"
+            color="inherit"
+            className='text-green-500'
+            disabled={!confirmRowId.includes(params.row.id)}
+            onClick={()=>handleConfirm(params.row)}
+          />,
           ]         
         },
       },
-],[ editModeRowId])
-// adjustedJobs
+],[ editModeRowId, confirmRowId])
 
   return (
     <>
@@ -270,5 +276,3 @@ Swal.fire({
 }
 
 export default NewDataTable
-
-

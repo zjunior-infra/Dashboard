@@ -1,14 +1,12 @@
-import { Box, Button, Fab } from '@mui/material'
-import EditIcon from '@mui/icons-material/Edit';
-import CloseIcon from '@mui/icons-material/Close';
+import { Fab } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete';
 import NavigationIcon from '@mui/icons-material/Navigation';
 import AddIcon from '@mui/icons-material/Add';
-import { GridRowId } from '@mui/x-data-grid';
+import { GridRowId, GridRowModesModel,GridRowModes } from '@mui/x-data-grid';
 import Swal from 'sweetalert2';
 import { toast } from 'react-toastify';
 import { Dispatch, SetStateAction } from 'react';
-import { mutate } from "swr"
+import { v4 as uuid } from 'uuid';
 
 interface TableButtons {
   selectedRows :GridRowId[]
@@ -18,31 +16,13 @@ interface TableButtons {
 }
 function TableButtons({selectedRows, setCrawlerJobs,setSelectedRows, crawlerJobs}: TableButtons){
 
-  const newJob= {
-      "title": "title",
-      "company": "company",
-      "description": "description",
-      "link": "",
-      "type": "Internship",
-      "role": "role",
-      "logo": "A", 
-      "skills": "", 
-}
-
-  const handleCreate = async()=>{
-    try{
-       const res= await fetch ('/api/create', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(newJob),
-        })  
-        toast.success("Job Created Successfully")
-    }catch(err){
-      console.log(err);
-      toast.error("Job Creation Failed")
-
-    } 
-   }
+  const handleCreate= async()=>{
+    console.log("Created");
+    const id = uuid();
+    const job= { id, new:true, title: '', company: '', description: "", link:"", level:"Internship", role: "", logo:"", skills:"" };
+    setCrawlerJobs((jobs) => [...jobs, job]);
+ 
+  }
 
   const handelDelete = async()=>{
     console.log(selectedRows);
@@ -77,23 +57,23 @@ function TableButtons({selectedRows, setCrawlerJobs,setSelectedRows, crawlerJobs
     console.log('confirm');
     setSelectedRows([])
     
-  //   const selectedJobs = crawlerJobs.filter(job=>{
-  //      if(selectedRows.includes(job.id)) return job
-  //      else return
-  //     });
-  //   console.log(selectedJobs);
-  //   try{
-  //     await fetch ('/api/confirm', {
-  //        method: 'POST',
-  //        headers: { 'Content-Type': 'application/json' },
-  //        body: JSON.stringify({selectedJobs: selectedJobs}),
-  //      })
-  //      setSelectedRows([])
-  //      toast.success("Jobs Confirmed Successfully")
-  //  }catch(err){
-  //    toast.error("Jobs Confirmation failed")
-  //    console.log(err);
-  //  } 
+    const selectedJobs = crawlerJobs.filter(job=>{
+       if(selectedRows.includes(job.id)) return job
+       else return
+      });
+    console.log(selectedJobs);
+    try{
+      await fetch ('/api/confirm', {
+         method: 'POST',
+         headers: { 'Content-Type': 'application/json' },
+         body: JSON.stringify({selectedJobs: selectedJobs}),
+       })
+       setSelectedRows([])
+       toast.success("Jobs Confirmed Successfully")
+   }catch(err){
+     toast.error("Jobs Confirmation failed")
+     console.log(err);
+   } 
   }
 
   return (
