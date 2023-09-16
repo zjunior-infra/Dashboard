@@ -9,3 +9,14 @@ type CrawledOpportunity = {
   role: string;
   description: string;
 }
+
+
+type Result<T, E> = {
+  result?: T;
+  error?: E;
+};
+
+interface ApiResponseError {
+  message: string,
+  statusCode: number
+}

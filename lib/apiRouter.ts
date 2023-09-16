@@ -1,38 +1,40 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { controller } from "./crud";
+import { getResultOrError } from "./utils";
 
-export interface ApiResponseError {
-    message: string,
-    statusCode: number
-}
+/** 
+ * Rotuer is used for GET, POST, PATCH, DELETE
+ * @param req 
+ * @param controller 
+ * 
+ * @returns Promise <T,ApiResponseError>
+*/
 
-export async function Router<T, D>(req: NextApiRequest, controller: controller): Promise<T | ApiResponseError> {
+export async function Router<T, _D>(req: NextApiRequest, controller:any): Promise<Result<T,ApiResponseError>> {
     try {
         switch (req.method) {
             case 'POST':
-                await controller.Post(req.body as T)
-                break;
+                return getResultOrError(await controller.Post(req.body as T))
             case 'GET':
-                const result = await controller.Get(req.body as T);
-                return result as T;
+                return getResultOrError(await controller.Get(req.body as T))
             case 'PATCH':
-                await controller.Update(req.body as T)
-                break;
+                return getResultOrError(await controller.Update(req.body as T))
             case 'DELETE':
-                await controller.Delete(req.body as T)
-                break;
+                return getResultOrError(await controller.Delete(req.body as T));
             default:
                 return {
+                error:{
                     statusCode: 400,
                     message: 'This HTTP method is not allowed'
+                    }
                 }
         }
     }
-    catch (err: unknown) {
+    catch (err: any) {
         return {
-            message: err.message || 'an error occured',
-            statusCode: err.statusCode || 500
-        }
+            error:{
+                statusCode: 500,
+                message: "Our Server isn't feel good"
+                }
+            }
     }
-    return undefined as T;
 }

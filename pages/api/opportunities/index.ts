@@ -1,31 +1,22 @@
 import { prisma } from "@/lib";
-import { Router, ApiResponseError } from "@/lib/apiRouter";
+import { Router } from "@/lib/apiRouter";
 import { Curd } from "@/lib/crud";
 import { NextApiRequest, NextApiResponse } from "next";
 
-class OpportunityController extends Curd<CrawledOpportunity | CrawledOpportunity[] | void> {
-  async Post(data: CrawledOpportunity[] | CrawledOpportunity) {
-    try {
+
+class OpportunityController extends Curd<CrawledOpportunity[]> {
+  async Post(data: CrawledOpportunity[]):Promise<any> {
       await prisma.opportunity.createMany({
         data: Array.isArray(data) ? data : [data], // Ensure data is an array
       });
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
   }
 
-  async Get() {
-    try {
+  async Get(): Promise<CrawledOpportunity[]> {
       const result = await prisma.opportunity.findMany();
       return result;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
   }
 
-  async Update(data: CrawledOpportunity[]) {
+  async Update(data: CrawledOpportunity[]): Promise<CrawledOpportunity[]> {
     try {
       const result = await Promise.all(
         data.map(async (opp: CrawledOpportunity) => {
@@ -42,34 +33,24 @@ class OpportunityController extends Curd<CrawledOpportunity | CrawledOpportunity
       throw error;
     }
   }
-  async Delete(data: CrawledOpportunity[]) {
+  async Delete(data: CrawledOpportunity[]):Promise<any> {
     const ids: string[] = data.map(opp => {
       return opp.id
     })
-    try {
       await prisma.opportunity.deleteMany({
         where: { id: { in: ids } },
       });
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
   }
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const controller = new OpportunityController();
-  try {
-    const result = await Router<CrawledOpportunity | CrawledOpportunity[], ApiResponseError>(
+  const {result,error} = await Router<CrawledOpportunity[], ApiResponseError>(
       req,
       controller
     );
-    if (result?.message)
-      res.status(result.statusCode).json({message:result.message});
-    else
-      res.status(result ? 200 : 204).json(result);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Something went wrong", Error: err });
-  }
+    if(error){
+      return res.status(error.statusCode).json(error.message);
+    }
+    return res.status(200).json(result);
 }

@@ -4,4 +4,3 @@ export abstract class Curd<T>{
     abstract Update(...args: any): Promise<T>;
     abstract Delete(...args: any): Promise<T>;
 }
-export type controller = InstanceType<typeof Curd>
