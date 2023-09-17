@@ -11,7 +11,7 @@ import SaveIcon from '@mui/icons-material/Save';
 
 import NavigationIcon from '@mui/icons-material/Navigation';
 
-function NewDataTable() {
+function DataTable() {
 
   const { data, error, isLoading} = useSWR('/api/jobs', fetcher,{revalidateOnFocus: false, revalidateOnReconnect: false,})
 
@@ -274,4 +274,4 @@ const handleConfirm = async (row: {id:string})=>{
   )
 }
 
-export default NewDataTable
+export default DataTable
