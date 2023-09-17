@@ -236,7 +236,6 @@ const handleConfirm = async (row: {id:string})=>{
             label="confirm"
             color="inherit"
             className='text-green-500'
-            disabled={!confirmRowId.includes(params.row.id)}
             onClick={()=>handleConfirm(params.row)}
           />,
           ]         
