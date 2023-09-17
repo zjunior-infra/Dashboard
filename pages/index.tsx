@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import DataTable from '@/components/DataTable';
+import DataTable from '@/components/DataGrid'
 
 
 
@@ -13,9 +13,7 @@ export default function Home() {
 
     
     <main className="flex min-h-screen w-full flex-col items-center justify-between p-24">
-        
-            <DataTable/>
-    
+      <DataTable />
     </main>
     </>
   )
