@@ -13,15 +13,23 @@ interface TableButtons {
   setCrawlerJobs :Dispatch<SetStateAction<CrawledOpportunity[]>>
   setSelectedRows: Dispatch<SetStateAction<GridRowId[]>>
   crawlerJobs:CrawledOpportunity[]
+  currPage: {page: number, pageSize: number};
 }
-function TableButtons({selectedRows, setCrawlerJobs,setSelectedRows, crawlerJobs}: TableButtons){
-
+function TableButtons({selectedRows, setCrawlerJobs,setSelectedRows, crawlerJobs, currPage}: TableButtons){
+  
   const handleCreate= async()=>{
+    const {page, pageSize} = currPage;
     console.log("Created");
     const id = uuid();
     const job= { id, new:true, title: '', company: '', description: "", link:"", level:"Internship", role: "", logo:"", skills:"" };
-    setCrawlerJobs((jobs) => [...jobs, job]);
- 
+   
+    const updatedCrawlerJobs = [
+      ...crawlerJobs.slice(0, page * pageSize),
+      job,
+      ...crawlerJobs.slice(page * pageSize),
+    ];
+   
+    setCrawlerJobs(updatedCrawlerJobs);
   }
 
   const handelDelete = async()=>{
