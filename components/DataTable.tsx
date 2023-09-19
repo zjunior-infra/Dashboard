@@ -19,6 +19,7 @@ function DataTable() {
   const [editModeRowId, setEditModeRowId] = useState<string[]>([]);
   const [confirmRowId, setConfirmRowId] = useState<string[]>([]);
   const [selectedRows, setSelectedRows]= useState<GridRowId[]>([]);
+  const [currPage, setCurrPage] = useState<{page:number, pageSize: number}>({page:0, pageSize: 30});
 
 useEffect(()=>{
     if (!isLoading){
@@ -235,7 +236,6 @@ const handleConfirm = async (row: {id:string})=>{
             icon={<NavigationIcon/>}
             label="confirm"
             color="inherit"
-            className='text-green-500'
             onClick={()=>handleConfirm(params.row)}
           />,
           ]         
@@ -250,7 +250,7 @@ const handleConfirm = async (row: {id:string})=>{
 
     <Box sx={{ height: 550, width: '100%' }} className="z-0" >
 
-    <TableButtons crawlerJobs={crawlerJobs} selectedRows={selectedRows} setCrawlerJobs={setCrawlerJobs} setSelectedRows={setSelectedRows}/>
+    <TableButtons currPage={currPage} crawlerJobs={crawlerJobs} selectedRows={selectedRows} setCrawlerJobs={setCrawlerJobs} setSelectedRows={setSelectedRows}/>
 
     <DataGrid
       initialState={{
@@ -261,6 +261,7 @@ const handleConfirm = async (row: {id:string})=>{
       rows={crawlerJobs}
       sx={{[`& .${gridClasses.row}`]: {bgcolor: (theme) => theme.palette.mode === 'light' ? `grey[200]` : `grey.900`, height: 80,},pl: 0.7,}}
       pageSizeOptions={[30,50,100]}
+      onPaginationModelChange={(params)=> setCurrPage(params)}
       editMode='row'
       checkboxSelection 
       disableRowSelectionOnClick
