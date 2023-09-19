@@ -13,7 +13,7 @@ import NavigationIcon from '@mui/icons-material/Navigation';
 
 function DataTable() {
 
-  const { data, error, isLoading} = useSWR('/api/jobs', fetcher,{revalidateOnFocus: false, revalidateOnReconnect: false,})
+  const { data, error, isLoading} = useSWR('/api/crawledopportunities', fetcher,{revalidateOnFocus: false, revalidateOnReconnect: false,})
 
   const [crawlerJobs, setCrawlerJobs] = useState<CrawledOpportunity[]>([]);
   const [editModeRowId, setEditModeRowId] = useState<string[]>([]);
@@ -29,7 +29,7 @@ useEffect(()=>{
   },[data])
 
 const processRowUpdate = (newRow: CrawledOpportunity) => {
-      const updatedRow = { ...newRow, isNew: false };
+      const updatedRow = { ...newRow};
       setCrawlerJobs(crawlerJobs.map((job) => (job.id === newRow.id ? updatedRow : job)));
       return updatedRow;
     
@@ -54,16 +54,13 @@ const activeRow = (id:string)=>{
 
 const handleRowEditStop: GridEventListener<'rowEditStop'> = (params) => {    
   activeRow(params.row.id.toString())
-  // setRowModesModel({
-  //   [params.row.id]: {mode:GridRowModes.View}
-  // })
 };
 
-const handelUpdate = async (jobs: any)=>{
-  const res = await fetch ('/api/update', {
-    method: 'PUT',
+const handelUpdate = async (job: any)=>{  
+  const res = await fetch (`/api/crawledopportunities/${job.id}`, {
+    method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({selectedJobs: [jobs]}),
+    body: JSON.stringify(job),
 })
 if (res.ok){
   console.log('success')
@@ -75,9 +72,8 @@ else {
 }
 };
 
-const handleCreate = async (jobs: any)=>{
-  const newJob = jobs
-  const res = await fetch ('/api/create', {
+const handleCreate = async (newJob: any)=>{
+  const res = await fetch ('/api/crawledopportunities', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(newJob)
@@ -92,7 +88,7 @@ else {
 }
 }
 
-const handleSave = async (row: { id: string; new?: boolean; })=> {
+const handleSave = async (row: {id: string; new?: boolean;})=> {
   if(row.new){
     delete row.new;
     handleCreate(row);  
@@ -116,10 +112,8 @@ Swal.fire({
     }).then(async (result) => {
       if (result.isConfirmed) {
         try{
-          await fetch ('/api/delete', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({selectedJobs: [row.id]}),
+          await fetch (`/api/crawledopportunities/${row.id}`, {
+            method: 'DELETE',
           })
 
           setCrawlerJobs(jobs => jobs.filter(job=> job.id !== row.id))
@@ -132,14 +126,15 @@ Swal.fire({
 };
 
 const handleConfirm = async (row: {id:string})=>{
-  console.log("Confirm");
+  console.log("Confirm"); 
   try{
    await fetch ('/api/confirm', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({selectedJobs: [row]}),
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(row)
     })
     setConfirmRowId((ids) => ids.filter((i) => i !== row.id))
+    setCrawlerJobs((jobs) => jobs.filter(job=> job.id !== row.id));
     toast.success("Job Confirmed Successfully")
   }catch(err){
     toast.error("Job Confirmation failed")
