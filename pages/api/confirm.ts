@@ -7,23 +7,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
-  const { selectedJobs } = req.body;
+
+  let selectedJobs = req.body;
+  if (!Array.isArray(selectedJobs))
+    selectedJobs = [selectedJobs];
 
   try {
-    // const newJobsInArhciveTABLE = await prisma.archivedJob.createMany({
-    // data : confirmedJobs,
-    // })
+    await prisma.opportunity.createMany({ data: selectedJobs });
 
-    const newJobsInJOBTABLE = await prisma.opportunity.createMany({
-      data: selectedJobs,
-    })
-
-    const deletedJobsInCRAWLEDJOBTABLE = await prisma.crawledOpportunity.deleteMany({
+    const selectedJobsIDs = selectedJobs.map((el: CrawledOpportunity) => el.id);
+    await prisma.crawledOpportunity.deleteMany({
       where: {
-        id: {
-          in: selectedJobs,
-        },
-      },
+        id: { in: selectedJobsIDs }
+      }
     });
 
     res.status(200).json({ message: 'Jobs Confirmend' });
