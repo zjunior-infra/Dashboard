@@ -32,9 +32,8 @@ function TableButtons({selectedRows, setCrawlerJobs,setSelectedRows, crawlerJobs
     setCrawlerJobs(updatedCrawlerJobs);
   }
 
-  const handelDelete = async()=>{
-    console.log(selectedRows);
-    
+  const handelDelete = async()=>{  
+    const selectedJobs = crawlerJobs.filter(j => selectedRows.includes(j.id));
     Swal.fire({
           title: `Are you sure you want to delete Selected opportunities?`,
           text: "You won't be able to revert this!",
@@ -46,13 +45,13 @@ function TableButtons({selectedRows, setCrawlerJobs,setSelectedRows, crawlerJobs
         }).then(async (result) => {
           if (result.isConfirmed) {
             try{
-              await fetch ('/api/delete', {
-                method: 'POST',
+              await fetch ('/api/crawledopportunities', {
+                method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({selectedJobs: selectedRows}),
+                body: JSON.stringify(selectedJobs),
               })
               setCrawlerJobs((jobs) => jobs.filter(job=> !selectedRows.includes(job.id)))
-              // setSelectedRows([])
+              setSelectedRows([])
               toast.success('Jobs Deleted Successfully')
             }catch(err){
               toast.error('Jobs Deleted Failed');
@@ -63,24 +62,19 @@ function TableButtons({selectedRows, setCrawlerJobs,setSelectedRows, crawlerJobs
 
   const handleConfirm = async()=>{
     console.log('confirm');
-    setSelectedRows([])
-    
-    const selectedJobs = crawlerJobs.filter(job=>{
-       if(selectedRows.includes(job.id)) return job
-       else return
-      });
-    console.log(selectedJobs);
+    const selectedJobs = crawlerJobs.filter(j => selectedRows.includes(j.id));
     try{
       await fetch ('/api/confirm', {
          method: 'POST',
          headers: { 'Content-Type': 'application/json' },
-         body: JSON.stringify({selectedJobs: selectedJobs}),
+         body: JSON.stringify(selectedJobs),
        })
-       setSelectedRows([])
-       toast.success("Jobs Confirmed Successfully")
+       const updatedCrawlerJobs = crawlerJobs.filter(j => !selectedRows.includes(j.id));
+       setCrawlerJobs(updatedCrawlerJobs);
+       setSelectedRows([]);
+       toast.success("Jobs Confirmed Successfully");
    }catch(err){
-     toast.error("Jobs Confirmation failed")
-     console.log(err);
+     toast.error("Jobs Confirmation failed");
    } 
   }
 
