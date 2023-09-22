@@ -1,5 +1,17 @@
 'use client'
 import Image from "next/image";
+import Link from "next/link";
+
+const routes = [
+    {
+        name:'Home',
+        link:'/'
+    },
+    {
+        name:'KPIs',
+        link:'/kpis'
+    }
+]
 
 const Header = ( ) => {
     return (
@@ -12,8 +24,14 @@ const Header = ( ) => {
                         </div>
 
                         <div className="end flex items-center grow">
-                            <div className="div flex flex-wrap items-center justify-end sm:gap-4 grow">
-                               
+                            <div className="flex flex-wrap items-center justify-center sm:gap-10 grow">
+                                {routes.map(route=>{
+                                    return (
+                                        <button className="p-2 border-2 border-slate-500 rounded-lg px-10 hover:bg-slate-500 duration-200">
+                                            <Link href={route.link} className="text-white font-bold">{route.name}</Link>
+                                        </button>
+                                    )
+                                })}
                             </div>
                         </div>
                     </div>

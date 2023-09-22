@@ -11,7 +11,7 @@ const Layout = ( {children} : LayoutProps ) => {
 
     const {theme, setTheme} = useTheme()
     return (
-        <div className=" bg-dark_bg">
+        <div className="bg-dark_bg">
             
             <Header />
             <main>{children}</main>
