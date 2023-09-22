@@ -16,8 +16,7 @@ export default function Kpis(){
             setNumber(data.number)
     },[data])
 
-    const onClick = (e)=>{
-        e.preventDefault()
+    const onClick = ()=>{
         
     }
     return (
