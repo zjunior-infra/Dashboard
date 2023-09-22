@@ -28,7 +28,7 @@ export default function Kpis(){
     
     <main className="flex justify-center gap-10 p-24">
         <DatePicker disableFuture onChange={(value)=> console.log(value)}/>
-        <Input type="number" onChange={(value=>setSpan(value))} placeholder="Back in time x days"/>
+        <Input type="number" placeholder="Back in time x days"/>
         <button onClick={onClick} className="p-2 px-10 border-2 border-slate-500 hover:bg-slate-500 duration-200 rounded-lg text-white">LookUp</button>
     </main>
     <section className="flex flex-col justify-center gap-10">
