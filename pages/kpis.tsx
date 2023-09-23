@@ -1,5 +1,6 @@
+import LiveTable from "@/components/LiveTable";
 import { fetcher } from "@/lib/utils";
-import { Input } from "@mui/material";
+import { Input, Typography } from "@mui/material";
 import { DateFieldProps, DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import Head from "next/head";
@@ -33,8 +34,18 @@ export default function Kpis(){
     </main>
     <section className="flex flex-col justify-center gap-10">
             <h1 className="text-4xl font-bold text-center text-white"> Number of Jobs Pushed to Live</h1>
-            <h1 className="text-4xl font-bold text-center text-white">{number}</h1>
-        </section>
+            <h1 className="text-4xl font-bold text-center text-white">{number}</h1>    
+    </section>
+    
+    <section>
+    <Typography variant="h3" component="h3"  color={'white'}
+        sx={{textAlign:'center', margin:4}}>Manage Live Jobs</Typography>
+
+        <main className="flex h-full w-full flex-col items-center justify-between px-24 pb-24">
+         <LiveTable />
+        </main>
+    </section>
+    
     </>
     )
 }

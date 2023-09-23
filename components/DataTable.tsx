@@ -245,7 +245,7 @@ const handleConfirm = async (row: {id:string})=>{
 
     <Box sx={{ height: 550, width: '100%' }} className="z-0" >
 
-    <TableButtons currPage={currPage} crawlerJobs={crawlerJobs} selectedRows={selectedRows} setCrawlerJobs={setCrawlerJobs} setSelectedRows={setSelectedRows}/>
+    <TableButtons type="crawler" currPage={currPage} jobs={crawlerJobs} selectedRows={selectedRows} setJobs={setCrawlerJobs} setSelectedRows={setSelectedRows}/>
 
     <DataGrid
       initialState={{

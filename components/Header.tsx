@@ -27,8 +27,8 @@ const Header = ( ) => {
                             <div className="flex flex-wrap items-center justify-center sm:gap-10 grow">
                                 {routes.map(route=>{
                                     return (
-                                        <button className="p-2 border-2 border-slate-500 rounded-lg px-10 hover:bg-slate-500 duration-200">
-                                            <Link href={route.link} className="text-white font-bold">{route.name}</Link>
+                                        <button key={route.name} className="p-2 border-2 border-slate-500 rounded-lg hover:bg-slate-500 duration-200">
+                                            <Link href={route.link} className="text-white font-bold px-10 m-2 py-2">{route.name}</Link>
                                         </button>
                                     )
                                 })}
