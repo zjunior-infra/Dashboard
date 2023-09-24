@@ -7,8 +7,7 @@ import Swal from 'sweetalert2';
 import { toast } from 'react-toastify';
 import { Dispatch, SetStateAction } from 'react';
 import { v4 as uuid } from 'uuid';
-import axios from 'axios'
-import { log } from 'console';
+
 interface TableButtons {
   type: "crawler" | "live"
   selectedRows :GridRowId[]
