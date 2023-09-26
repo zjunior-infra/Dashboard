@@ -241,7 +241,7 @@ const handleConfirm = async (row: {id:string})=>{
   return (
     <>
     <Typography variant="h3" component="h3"  color={'white'}
-    sx={{textAlign:'center'}}>Manage Jobs</Typography>
+    sx={{textAlign:'center'}}>Manage Crawler Jobs</Typography>
 
     <Box sx={{ height: 550, width: '100%' }} className="z-0" >
 

@@ -157,7 +157,7 @@ Swal.fire({
         field: 'actions',
         type: 'actions',
         headerName: 'Actions',
-        width: 100,
+        width: 120,
         cellClassName: 'actions',
         getActions:(params: {row: { id: string }}) => {
             return [
@@ -184,8 +184,13 @@ Swal.fire({
 
   return (
     <>
+    <Typography variant="h3" component="h3"  color={'white'}
+    sx={{textAlign:'center'}}>Manage Live Jobs</Typography>
+
     <Box sx={{ height: 550, width: '100%' }} className="z-0" >
-    <TableButtons type='live' currPage={currPage} jobs={liveJobs} selectedRows={selectedRows} setJobs={setLiveJobs} setSelectedRows={setSelectedRows}/>
+
+
+      <TableButtons type='live' currPage={currPage} jobs={liveJobs} selectedRows={selectedRows} setJobs={setLiveJobs} setSelectedRows={setSelectedRows}/>
 
     <DataGrid
       initialState={{

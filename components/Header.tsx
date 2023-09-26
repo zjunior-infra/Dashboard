@@ -8,6 +8,14 @@ const routes = [
         link:'/'
     },
     {
+        name:'Crawler',
+        link:'/crawler'
+    },
+    {
+        name:'Opportunites',
+        link:'/opportunites'
+    },
+    {
         name:'KPIs',
         link:'/kpis'
     }
