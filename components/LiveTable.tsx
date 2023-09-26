@@ -9,28 +9,25 @@ import Swal from 'sweetalert2'
 import DeleteIcon from '@mui/icons-material/Delete';
 import SaveIcon from '@mui/icons-material/Save';
 
-import NavigationIcon from '@mui/icons-material/Navigation';
+function LiveTable() {
 
-function DataTable() {
+  const { data, error, isLoading} = useSWR('/api/opportunities', fetcher,{revalidateOnFocus: false, revalidateOnReconnect: false,})
 
-  const { data, error, isLoading} = useSWR('/api/crawledopportunities', fetcher,{revalidateOnFocus: false, revalidateOnReconnect: false,})
-
-  const [crawlerJobs, setCrawlerJobs] = useState<CrawledOpportunity[]>([]);
+  const [liveJobs, setLiveJobs] = useState<CrawledOpportunity[]>([]);
   const [editModeRowId, setEditModeRowId] = useState<string[]>([]);
-  const [confirmRowId, setConfirmRowId] = useState<string[]>([]);
   const [selectedRows, setSelectedRows]= useState<GridRowId[]>([]);
   const [currPage, setCurrPage] = useState<{page:number, pageSize: number}>({page:0, pageSize: 30});
 
 useEffect(()=>{
     if (!isLoading){
-      setCrawlerJobs(data)
+      setLiveJobs(data)
     }      
    
   },[data])
 
 const processRowUpdate = (newRow: CrawledOpportunity) => {
       const updatedRow = { ...newRow};
-      setCrawlerJobs(crawlerJobs.map((job) => (job.id === newRow.id ? updatedRow : job)));
+      setLiveJobs(jobs => jobs.map((job) => (job.id === newRow.id ? updatedRow : job)));
       return updatedRow;
     
 };
@@ -43,13 +40,7 @@ const activeRow = (id:string)=>{
         return [...ids, id]
       }
     });
-    setConfirmRowId(ids =>{
-      if (ids.includes(id)){
-        return [...ids]
-      }else{
-        return [...ids, id]
-      }
-    });
+    
 };
 
 const handleRowEditStop: GridEventListener<'rowEditStop'> = (params) => {    
@@ -57,91 +48,50 @@ const handleRowEditStop: GridEventListener<'rowEditStop'> = (params) => {
 };
 
 const handelUpdate = async (job: any)=>{  
-  const res = await fetch (`/api/crawledopportunities/${job.id}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(job),
-})
-if (res.ok){
-  console.log('success')
-  toast.success('Job updated successfully')
-}
-else {
-  console.log('fail')
-  toast.error('Job update failed')
-}
-};
-
-const handleCreate = async (newJob: any)=>{
-  const res = await fetch ('/api/crawledopportunities', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(newJob)
-})
-if (res.ok){
-  console.log('success')
-  toast.success('Job Created successfully')
-}
-else {
-  console.log('fail')
-  toast.error('Job creation failed')
-}
-}
+    const res = await fetch (`/api/opportunities/${job.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(job),
+    })
+    if (res.ok){
+      console.log('success')
+      toast.success('Job updated successfully')
+    }
+    else {
+      console.log('fail')
+      toast.error('Job update failed')
+}};
 
 const handleSave = async (row: {id: string; new?: boolean;})=> {
-  if(row.new){
-    delete row.new;
-    handleCreate(row);  
-  }
-  else{
-    handelUpdate(row)
-  }
+  handelUpdate(row)
   setEditModeRowId((ids) => ids.filter((i) => i !== row.id))
 };
 
-const handelDelete = (row: { id: string; }) => {
-
+const handelDelete = async (row: { id: string; }) => {
+    
 Swal.fire({
-      title: `Are you sure you want to delete ${row.id} opportunity?`,
-      text: "You won't be able to revert this!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Yes, delete it!'
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try{
-          await fetch (`/api/crawledopportunities/${row.id}`, {
-            method: 'DELETE',
-          })
+    title: `Are you sure you want to delete ${row.id} opportunity?`,
+    text: "You won't be able to revert this!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Yes, delete it!'
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try{
+        await fetch (`/api/opportunities/${row.id}`, {
+          method: 'DELETE',
+        })
 
-          setCrawlerJobs(jobs => jobs.filter(job=> job.id !== row.id))
-          toast.success('Job Deleted Successfully')
-        }catch(err){
-          toast.error('Job Deleted Failed')
-        }
+        setLiveJobs(jobs => jobs.filter(job=> job.id !== row.id))
+        toast.success('Job Deleted Successfully')
+      }catch(err){
+        toast.error('Job Deleted Failed')
       }
-    })
+    }
+  })
 };
-
-const handleConfirm = async (row: {id:string})=>{
-  console.log("Confirm"); 
-  try{
-   await fetch ('/api/confirm', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(row)
-    })
-    setConfirmRowId((ids) => ids.filter((i) => i !== row.id))
-    setCrawlerJobs((jobs) => jobs.filter(job=> job.id !== row.id));
-    toast.success("Job Confirmed Successfully")
-  }catch(err){
-    toast.error("Job Confirmation failed")
-    console.log(err);
-  } 
-
-}
 
   const columns = useMemo(()=>
   [
@@ -227,25 +177,20 @@ const handleConfirm = async (row: {id:string})=>{
             color="inherit"
             onClick={()=>handelDelete(params.row)}
           />,
-          <GridActionsCellItem
-            icon={<NavigationIcon/>}
-            label="confirm"
-            color="inherit"
-            onClick={()=>handleConfirm(params.row)}
-          />,
           ]         
         },
       },
-],[ editModeRowId, confirmRowId])
+],[ editModeRowId])
 
   return (
     <>
     <Typography variant="h3" component="h3"  color={'white'}
-    sx={{textAlign:'center'}}>Manage Crawler Jobs</Typography>
+    sx={{textAlign:'center'}}>Manage Live Jobs</Typography>
 
     <Box sx={{ height: 550, width: '100%' }} className="z-0" >
 
-    <TableButtons type="crawler" currPage={currPage} jobs={crawlerJobs} selectedRows={selectedRows} setJobs={setCrawlerJobs} setSelectedRows={setSelectedRows}/>
+
+      <TableButtons type='live' currPage={currPage} jobs={liveJobs} selectedRows={selectedRows} setJobs={setLiveJobs} setSelectedRows={setSelectedRows}/>
 
     <DataGrid
       initialState={{
@@ -253,7 +198,7 @@ const handleConfirm = async (row: {id:string})=>{
       }}
       
       columns={columns} 
-      rows={crawlerJobs}
+      rows={liveJobs}
       sx={{[`& .${gridClasses.row}`]: {bgcolor: (theme) => theme.palette.mode === 'light' ? `grey[200]` : `grey.900`, height: 80,},pl: 0.7,}}
       pageSizeOptions={[30,50,100]}
       onPaginationModelChange={(params)=> setCurrPage(params)}
@@ -270,4 +215,4 @@ const handleConfirm = async (row: {id:string})=>{
   )
 }
 
-export default DataTable
+export default LiveTable;

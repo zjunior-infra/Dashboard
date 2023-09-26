@@ -9,14 +9,17 @@ import { Dispatch, SetStateAction } from 'react';
 import { v4 as uuid } from 'uuid';
 
 interface TableButtons {
+  type: "crawler" | "live"
   selectedRows :GridRowId[]
-  setCrawlerJobs :Dispatch<SetStateAction<CrawledOpportunity[]>>
+  setJobs :Dispatch<SetStateAction<CrawledOpportunity[]>>
   setSelectedRows: Dispatch<SetStateAction<GridRowId[]>>
-  crawlerJobs:CrawledOpportunity[]
+  jobs:CrawledOpportunity[]
   currPage: {page: number, pageSize: number};
 }
-function TableButtons({selectedRows, setCrawlerJobs,setSelectedRows, crawlerJobs, currPage}: TableButtons){
-  
+function TableButtons({selectedRows, setJobs, setSelectedRows, jobs, currPage, type}: TableButtons){
+
+  const api_url = type === 'live'? '/api/opportunities' : '/api/crawledopportunities'
+
   const handleCreate= async()=>{
     const {page, pageSize} = currPage;
     console.log("Created");
@@ -24,16 +27,17 @@ function TableButtons({selectedRows, setCrawlerJobs,setSelectedRows, crawlerJobs
     const job= { id, new:true, title: '', company: '', description: "", link:"", level:"Internship", role: "", logo:"", skills:"" };
    
     const updatedCrawlerJobs = [
-      ...crawlerJobs.slice(0, page * pageSize),
+      ...jobs.slice(0, page * pageSize),
       job,
-      ...crawlerJobs.slice(page * pageSize),
+      ...jobs.slice(page * pageSize),
     ];
    
-    setCrawlerJobs(updatedCrawlerJobs);
+    setJobs(updatedCrawlerJobs);
   }
 
-  const handelDelete = async()=>{  
-    const selectedJobs = crawlerJobs.filter(j => selectedRows.includes(j.id));
+  const handelDelete = async ()=>{  
+    const selectedJobs: CrawledOpportunity[] = jobs.filter(j => selectedRows.includes(j.id));
+    
     Swal.fire({
           title: `Are you sure you want to delete Selected opportunities?`,
           text: "You won't be able to revert this!",
@@ -44,17 +48,18 @@ function TableButtons({selectedRows, setCrawlerJobs,setSelectedRows, crawlerJobs
           confirmButtonText: 'Yes, delete them!'
         }).then(async (result) => {
           if (result.isConfirmed) {
-            try{
-              await fetch ('/api/crawledopportunities', {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(selectedJobs),
-              })
-              setCrawlerJobs((jobs) => jobs.filter(job=> !selectedRows.includes(job.id)))
+              try{              
+                await fetch (api_url, {
+                  method: 'DELETE',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(selectedJobs),
+                })
+              setJobs((jobs) => jobs.filter(job=> !selectedRows.includes(job.id)))
               setSelectedRows([])
               toast.success('Jobs Deleted Successfully')
             }catch(err){
               toast.error('Jobs Deleted Failed');
+              console.log(err);
             }
           }
         })
@@ -62,15 +67,15 @@ function TableButtons({selectedRows, setCrawlerJobs,setSelectedRows, crawlerJobs
 
   const handleConfirm = async()=>{
     console.log('confirm');
-    const selectedJobs = crawlerJobs.filter(j => selectedRows.includes(j.id));
+    const selectedJobs = jobs.filter(j => selectedRows.includes(j.id));
     try{
       await fetch ('/api/confirm', {
          method: 'POST',
          headers: { 'Content-Type': 'application/json' },
          body: JSON.stringify(selectedJobs),
        })
-       const updatedCrawlerJobs = crawlerJobs.filter(j => !selectedRows.includes(j.id));
-       setCrawlerJobs(updatedCrawlerJobs);
+       const updatedCrawlerJobs = jobs.filter(j => !selectedRows.includes(j.id));
+       setJobs(updatedCrawlerJobs);
        setSelectedRows([]);
        toast.success("Jobs Confirmed Successfully");
    }catch(err){
@@ -87,11 +92,11 @@ function TableButtons({selectedRows, setCrawlerJobs,setSelectedRows, crawlerJobs
       <DeleteIcon />
     </Fab> 
 
-    <Fab color="primary" variant="extended" aria-label="add" className='bg-gray-200' onClick={handleCreate}>
+    <Fab color="primary" variant="extended" aria-label="add" className={`bg-gray-200 ${type ==='live' && 'invisible'}`} onClick={handleCreate}>
       <AddIcon />
     </Fab> 
    
-  <Fab variant="extended" color="primary" aria-label="confirm" className=' bg-gray-200' onClick={handleConfirm} disabled={selectedRows.length === 0}>
+  <Fab variant="extended" color="primary" aria-label="confirm" className={`bg-gray-200 ${type ==='live' && 'invisible'}`} onClick={handleConfirm} disabled={selectedRows.length === 0}>
       <NavigationIcon sx={{ mr: 1 }} />
       Confirm jobs
   </Fab>   
