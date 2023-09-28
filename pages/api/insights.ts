@@ -34,7 +34,6 @@ async function getReport() {
             }
         ],
     });
-    console.log(response);
     let users = 0, totalVisits = 0, clickApply = 0;
     if (response?.rows) {
         response.rows.forEach(row => {
