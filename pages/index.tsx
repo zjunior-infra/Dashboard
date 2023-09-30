@@ -35,7 +35,8 @@ export default function Home() {
 
     {isLoading && <CircularProgress color="inherit" />}
 
-    <div className='grid grid-cols-3 gap-x-20 gap-y-8 flex-wrap'>    
+    <div className='flex flex-wrap gap-20 justify-center'>    
+
       {keys.map((title: string, i:number) => {
           return <HomeBox key={title} title={title} value={values[i]}/>
       })}
